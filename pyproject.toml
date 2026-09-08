@@ -3,6 +3,6 @@ line-length = 100
 target-version = "py313"
 
 [tool.pytest.ini_options]
+addopts = "--basetemp=.pytest-tmp-search"
 pythonpath = ["."]
 testpaths = ["services/api/tests"]
-

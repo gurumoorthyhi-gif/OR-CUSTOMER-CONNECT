@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from services.api.app.core.config import settings
 from services.api.app.db.init_db import init_db
+from services.api.app.modules.customers.routes import PROFILE_UPLOAD_DIR
 from services.api.app.modules.messages.routes import UPLOAD_DIR
 from services.api.app.routers import api_router
 
@@ -51,3 +52,4 @@ def api_home() -> dict[str, str]:
 
 app.include_router(api_router, prefix="/api")
 app.mount("/api/messages/uploads", StaticFiles(directory=UPLOAD_DIR), name="message-uploads")
+app.mount("/api/customers/profile-uploads", StaticFiles(directory=PROFILE_UPLOAD_DIR), name="profile-uploads")

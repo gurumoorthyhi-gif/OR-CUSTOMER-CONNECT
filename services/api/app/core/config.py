@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     object_storage_bucket: str = "oddraven-local"
     jwt_secret: str = "change-me"
-    cors_origins: str = "http://127.0.0.1:3000,http://localhost:3000"
+    cors_origins: str = "http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:3010,http://localhost:3010,http://127.0.0.1:3011,http://localhost:3011"
     kms_erp_base_url: str = "http://127.0.0.1:8001/api/v1"
     kms_erp_username: str = ""
     kms_erp_password: str = ""

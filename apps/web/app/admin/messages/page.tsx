@@ -13,8 +13,7 @@ type Message = {
 };
 
 export default async function AdminMessagesPage() {
-  const messages = await apiGet<Message[]>("/api/messages", sampleMessages);
+  const messages = await apiGet<Message[]>("/api/messages?viewer_type=staff&limit=100", sampleMessages);
 
   return <Messenger messages={messages} mode="staff" />;
 }
-

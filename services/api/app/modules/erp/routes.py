@@ -1,8 +1,16 @@
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
 
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from services.api.app.db.session import get_db
 from services.api.app.integrations.erp_adapter import ErpConnectionError, erp_adapter
+from services.api.app.models import Customer
+from services.api.app.modules.customers.routes import serialize_customer, sync_customer_to_erp
 
 router = APIRouter()
+DbSession = Annotated[Session, Depends(get_db)]
 
 
 @router.get("/status")
@@ -16,6 +24,17 @@ def list_erp_customers() -> list[dict]:
         return erp_adapter.list_customers()
     except ErpConnectionError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@router.post("/customers/{customer_id}/sync")
+def sync_erp_customer(customer_id: str, db: DbSession) -> dict:
+    customer = db.scalar(select(Customer).where(Customer.public_id == customer_id))
+    if customer is None:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    erp_sync = sync_customer_to_erp(customer)
+    db.commit()
+    db.refresh(customer)
+    return {"customer": serialize_customer(customer), "erp_sync": erp_sync}
 
 
 @router.post("/rate")

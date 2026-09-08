@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, DateTime, Enum, ForeignKey, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from services.api.app.db.session import Base
@@ -28,11 +28,23 @@ class Customer(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     public_id: Mapped[str] = mapped_column(String(32), unique=True, index=True)
+    contact_name: Mapped[str | None] = mapped_column(String(120), nullable=True)
     business_name: Mapped[str] = mapped_column(String(160))
     mobile: Mapped[str] = mapped_column(String(20), unique=True, index=True)
+    email: Mapped[str | None] = mapped_column(String(160), nullable=True)
+    profile_image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     gst_number: Mapped[str | None] = mapped_column(String(24), nullable=True)
+    delivery_type: Mapped[str] = mapped_column(String(20), default="courier", server_default="courier", nullable=False)
+    preferred_courier: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    billing_address: Mapped[dict[str, str] | None] = mapped_column(JSON, nullable=True)
+    profile_locked: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0", nullable=False)
+    erp_customer_id: Mapped[str | None] = mapped_column(String(80), nullable=True, index=True)
+    erp_sync_status: Mapped[str] = mapped_column(String(24), default="pending", server_default="pending", nullable=False)
+    erp_sync_error: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    erp_synced_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     level: Mapped[str] = mapped_column(String(40), default="standard")
     account_manager: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    security_note: Mapped[str | None] = mapped_column(String(160), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     designs: Mapped[list["Design"]] = relationship(back_populates="customer")

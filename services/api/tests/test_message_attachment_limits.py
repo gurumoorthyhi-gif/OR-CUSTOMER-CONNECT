@@ -50,6 +50,10 @@ def pdf_files(count: int) -> list[tuple[str, tuple[str, bytes, str]]]:
     ]
 
 
+def test_attachment_size_limit_is_one_gigabyte() -> None:
+    assert message_routes.MAX_UPLOAD_BYTES == 1 * 1024 * 1024 * 1024
+
+
 def test_accepts_one_hundred_attachments(tmp_path, monkeypatch) -> None:
     client = create_client(tmp_path, monkeypatch)
 

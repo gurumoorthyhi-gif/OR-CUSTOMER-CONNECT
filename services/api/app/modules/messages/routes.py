@@ -1,35 +1,58 @@
-import json
 import hashlib
+import json
+from datetime import UTC, datetime, timedelta
 from io import BytesIO
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Annotated
 from uuid import uuid4
 from zoneinfo import ZoneInfo
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    UploadFile,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.orm import Session
 
 from services.api.app.db.session import get_db
-from services.api.app.models import AuditLog, ConversationPreference, Customer, Message, MessageAttachment, Order
+from services.api.app.models import (
+    AuditLog,
+    ConversationPreference,
+    Customer,
+    Message,
+    MessageAttachment,
+    Order,
+)
 
 router = APIRouter()
 DbSession = Annotated[Session, Depends(get_db)]
 UPLOAD_DIR = Path("local_uploads/messages")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-MAX_UPLOAD_BYTES = 100 * 1024 * 1024
+MAX_UPLOAD_BYTES = 1 * 1024 * 1024 * 1024
 ALLOWED_EXTENSIONS = {
     ".aac", ".ai", ".cdr", ".eps", ".jpeg", ".jpg", ".m4a", ".mp3", ".ogg",
     ".opus", ".pdf", ".png", ".psd", ".rar", ".svg", ".tif", ".tiff", ".wav",
     ".webp", ".zip", ".mp4", ".mov", ".webm",
 }
 MAX_FILES_PER_MESSAGE = 100
+ATTACHMENTS_FILE = File(None)
+ATTACHMENT_FILE = File(None)
 
 try:
-    from PIL import Image
+    from PIL import Image, UnidentifiedImageError
 except ImportError:  # Thumbnail generation is optional in minimal API environments.
     Image = None
+    UnidentifiedImageError = OSError
+
+
+def utc_now() -> datetime:
+    return datetime.now(UTC).replace(tzinfo=None)
 
 
 class MessageConnectionManager:
@@ -45,7 +68,7 @@ class MessageConnectionManager:
     async def disconnect(self, websocket: WebSocket) -> None:
         role = self.connections.pop(websocket, None)
         if role:
-            self.last_seen[role] = datetime.utcnow().isoformat()
+            self.last_seen[role] = utc_now().isoformat()
             await self.broadcast_presence(role)
 
     async def broadcast(self, event: dict, exclude: WebSocket | None = None) -> None:
@@ -55,7 +78,7 @@ class MessageConnectionManager:
                 continue
             try:
                 await socket.send_json(event)
-            except Exception:
+            except (RuntimeError, WebSocketDisconnect):
                 stale.append(socket)
         for socket in stale:
             self.connections.pop(socket, None)
@@ -166,7 +189,7 @@ def create_thumbnail(content: bytes, stored_filename: str, mime_type: str) -> tu
             thumbnail_name = f"{Path(stored_filename).stem}-thumb.jpg"
             preview.convert("RGB").save(UPLOAD_DIR / thumbnail_name, "JPEG", quality=82, optimize=True)
             return f"/api/messages/uploads/{thumbnail_name}", width, height
-    except Exception:
+    except (OSError, UnidentifiedImageError):
         return None, None, None
 
 
@@ -271,8 +294,8 @@ def search_messages(
             local_start = datetime.strptime(date, "%Y-%m-%d").replace(tzinfo=ZoneInfo("Asia/Kolkata"))
         except ValueError:
             raise HTTPException(status_code=422, detail="Date must use YYYY-MM-DD format") from None
-        utc_start = local_start.astimezone(timezone.utc).replace(tzinfo=None)
-        utc_end = (local_start + timedelta(days=1)).astimezone(timezone.utc).replace(tzinfo=None)
+        utc_start = local_start.astimezone(UTC).replace(tzinfo=None)
+        utc_end = (local_start + timedelta(days=1)).astimezone(UTC).replace(tzinfo=None)
         conditions.extend((Message.created_at >= utc_start, Message.created_at < utc_end))
 
     safe_limit = min(max(limit, 1), 200)
@@ -328,18 +351,18 @@ async def update_conversation_preference(payload: dict, db: DbSession) -> dict:
     elif action == "mute":
         duration = str(payload.get("duration", "always"))
         if duration == "8_hours":
-            preference.muted_until = datetime.utcnow() + timedelta(hours=8)
+            preference.muted_until = utc_now() + timedelta(hours=8)
         elif duration == "1_week":
-            preference.muted_until = datetime.utcnow() + timedelta(days=7)
+            preference.muted_until = utc_now() + timedelta(days=7)
         elif duration == "always":
-            preference.muted_until = datetime(9999, 12, 31)
+            preference.muted_until = datetime(9999, 12, 31, tzinfo=UTC).replace(tzinfo=None)
         elif duration == "off":
             preference.muted_until = None
         else:
             raise HTTPException(status_code=400, detail="Invalid mute duration")
     else:
         raise HTTPException(status_code=400, detail="Unsupported conversation action")
-    preference.updated_at = datetime.utcnow()
+    preference.updated_at = utc_now()
     db.add(AuditLog(actor=viewer, action=f"conversation.{action}", entity_type="conversation", entity_id=str(preference.customer_id)))
     db.commit()
     db.refresh(preference)
@@ -370,7 +393,7 @@ async def send_message(payload: dict, db: DbSession) -> dict:
         message_type="text",
         client_message_id=client_message_id,
         body=body[:10000],
-        delivered_at=datetime.utcnow(),
+        delivered_at=utc_now(),
         status="delivered",
         reply_to_message_id=payload_to_int(payload.get("reply_to_message_id")),
         reply_to_body=str(payload.get("reply_to_body") or "")[:1000] or None,
@@ -397,8 +420,8 @@ async def send_message_with_attachment(
     reply_to_body: str | None = Form(None),
     reply_to_sender_type: str | None = Form(None),
     attachment_durations: str | None = Form(None),
-    attachments: list[UploadFile] | None = File(None),
-    attachment: UploadFile | None = File(None),
+    attachments: list[UploadFile] | None = ATTACHMENTS_FILE,
+    attachment: UploadFile | None = ATTACHMENT_FILE,
 ) -> dict:
     customer = db.scalar(select(Customer).order_by(Customer.id.asc()))
     order = db.scalar(select(Order).where(Order.public_id == order_id)) if order_id else None
@@ -418,7 +441,7 @@ async def send_message_with_attachment(
     try:
         raw_durations = json.loads(attachment_durations) if attachment_durations else []
         if not isinstance(raw_durations, list):
-            raise ValueError
+            raise TypeError
         durations = [max(0, min(int(value), 86400)) if value is not None else None for value in raw_durations]
     except (TypeError, ValueError, json.JSONDecodeError):
         raise HTTPException(status_code=422, detail="Attachment durations must be a JSON array") from None
@@ -432,7 +455,7 @@ async def send_message_with_attachment(
                 raise HTTPException(status_code=415, detail=f"{extension or 'This file type'} is not allowed")
             content = await incoming.read(MAX_UPLOAD_BYTES + 1)
             if len(content) > MAX_UPLOAD_BYTES:
-                raise HTTPException(status_code=413, detail=f"{incoming.filename} exceeds the 100 MB limit")
+                raise HTTPException(status_code=413, detail=f"{incoming.filename} exceeds the 1 GB limit")
             stored_filename = f"{uuid4().hex}{extension}"
             stored_path = UPLOAD_DIR / stored_filename
             stored_path.write_bytes(content)
@@ -476,7 +499,7 @@ async def send_message_with_attachment(
         message_type=message_type,
         client_message_id=safe_client_id,
         body=body.strip()[:10000],
-        delivered_at=datetime.utcnow(),
+        delivered_at=utc_now(),
         status="delivered",
         reply_to_message_id=payload_to_int(reply_to_message_id),
         reply_to_body=(reply_to_body or "")[:1000] or None,
@@ -507,7 +530,7 @@ async def mark_messages_read(payload: dict, db: DbSession) -> dict:
     if reader_type not in {"customer", "staff"}:
         raise HTTPException(status_code=400, detail="Invalid reader type")
     unread_messages = db.scalars(select(Message).where(Message.sender_type != reader_type, Message.read_at.is_(None))).all()
-    read_at = datetime.utcnow()
+    read_at = utc_now()
     ids: list[int] = []
     for message in unread_messages:
         message.read_at = read_at
@@ -526,7 +549,7 @@ async def update_message_action(message_id: int, payload: dict, db: DbSession) -
         raise HTTPException(status_code=404, detail="Message not found")
     action = str(payload.get("action", "")).lower()
     actor = str(payload.get("actor", "staff")).lower()
-    now = datetime.utcnow()
+    now = utc_now()
     if action == "delete_for_everyone":
         message.deleted_at = now
         message.body = "This message was deleted"

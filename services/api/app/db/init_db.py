@@ -1,7 +1,6 @@
 from decimal import Decimal
 
-from sqlalchemy import inspect, text
-from sqlalchemy import select
+from sqlalchemy import inspect, select, text
 from sqlalchemy.orm import Session
 
 from services.api.app.db.session import Base, engine
@@ -10,12 +9,10 @@ from services.api.app.models import (
     AuditLog,
     Customer,
     CustomerOrderStatus,
-    ConversationPreference,
     Design,
     Invoice,
     Machine,
     Message,
-    MessageAttachment,
     Order,
     Payment,
     ProductionJob,
@@ -37,11 +34,14 @@ def init_db() -> None:
         if customer is None:
             customer = Customer(
                 public_id="OR-TN-0001",
+                contact_name="Sowmiya",
                 business_name="Sowmiya Prints",
                 mobile="+919876543210",
+                email="orders@sowmiyaprints.example",
                 gst_number="33ABCDE1234F1Z5",
                 level="Dealer",
                 account_manager="ODD RAVEN Support",
+                security_note="OTP login active",
             )
             session.add(customer)
             session.flush()
@@ -152,7 +152,37 @@ def init_db() -> None:
 
 def _ensure_runtime_columns() -> None:
     inspector = inspect(engine)
-    if "messages" not in inspector.get_table_names():
+    table_names = inspector.get_table_names()
+    if "customers" in table_names:
+        customer_columns = {column["name"] for column in inspector.get_columns("customers")}
+        for column_name, column_type in {
+            "contact_name": "VARCHAR(120)",
+            "email": "VARCHAR(160)",
+            "profile_image_url": "VARCHAR(500)",
+            "security_note": "VARCHAR(160)",
+            "delivery_type": "VARCHAR(20) DEFAULT 'courier'",
+            "preferred_courier": "VARCHAR(80)",
+            "billing_address": "JSON",
+            "profile_locked": "BOOLEAN DEFAULT 0",
+            "erp_customer_id": "VARCHAR(80)",
+            "erp_sync_status": "VARCHAR(24) DEFAULT 'pending'",
+            "erp_sync_error": "VARCHAR(500)",
+            "erp_synced_at": "DATETIME",
+        }.items():
+            if column_name not in customer_columns:
+                with engine.begin() as connection:
+                    connection.execute(text(f"ALTER TABLE customers ADD COLUMN {column_name} {column_type}"))
+        with engine.begin() as connection:
+            connection.execute(text(
+                "UPDATE customers SET profile_locked = 1 "
+                "WHERE COALESCE(TRIM(business_name), '') <> '' "
+                "AND COALESCE(TRIM(mobile), '') <> '' "
+                "AND COALESCE(TRIM(gst_number), '') <> '' "
+                "AND billing_address IS NOT NULL "
+                "AND profile_locked = 0"
+            ))
+
+    if "messages" not in table_names:
         return
 
     message_columns = {column["name"] for column in inspector.get_columns("messages")}

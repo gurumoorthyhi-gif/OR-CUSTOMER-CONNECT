@@ -12,6 +12,12 @@ class ErpAdapter(Protocol):
     def list_customers(self) -> list[dict]:
         """Return customers from the existing ERP."""
 
+    def create_customer(self, payload: dict) -> dict:
+        """Create a customer in the existing ERP."""
+
+    def update_customer(self, customer_id: str, payload: dict) -> dict:
+        """Update a customer in the existing ERP."""
+
     def calculate_rate(self, payload: dict) -> dict:
         """Return the ERP-authoritative rate calculation."""
 
@@ -60,6 +66,18 @@ class KmsErpHttpAdapter:
         data = self._request("GET", "/customers")
         if not isinstance(data, list):
             raise ErpConnectionError("ERP customers response was not a list")
+        return data
+
+    def create_customer(self, payload: dict) -> dict:
+        data = self._request("POST", "/customers", json=payload)
+        if not isinstance(data, dict):
+            raise ErpConnectionError("ERP customer create response was not an object")
+        return data
+
+    def update_customer(self, customer_id: str, payload: dict) -> dict:
+        data = self._request("PUT", f"/customers/{customer_id}", json=payload)
+        if not isinstance(data, dict):
+            raise ErpConnectionError("ERP customer update response was not an object")
         return data
 
     def calculate_rate(self, payload: dict) -> dict:
@@ -131,6 +149,12 @@ class PendingErpAdapter:
 
     def list_customers(self) -> list[dict]:
         return []
+
+    def create_customer(self, payload: dict) -> dict:
+        return {"status": "pending_erp_package", "input": payload}
+
+    def update_customer(self, customer_id: str, payload: dict) -> dict:
+        return {"status": "pending_erp_package", "customer_id": customer_id, "input": payload}
 
     def calculate_rate(self, payload: dict) -> dict:
         return {"status": "pending_erp_package", "input": payload}

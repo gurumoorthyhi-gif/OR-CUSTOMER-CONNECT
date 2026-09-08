@@ -1,4 +1,4 @@
-const CACHE_NAME = "odd-raven-shell-v1";
+const CACHE_NAME = "odd-raven-shell-v2";
 const SHELL_URLS = ["/", "/login", "/orders", "/designs", "/messages", "/support", "/offline"];
 
 self.addEventListener("install", (event) => {
@@ -25,3 +25,18 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || "/messages";
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+      for (const client of windows) {
+        if ("focus" in client) {
+          client.postMessage({ type: "notification.clicked", url });
+          return client.focus();
+        }
+      }
+      return clients.openWindow(url);
+    }),
+  );
+});

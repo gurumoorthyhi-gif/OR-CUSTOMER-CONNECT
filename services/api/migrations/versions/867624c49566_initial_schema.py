@@ -30,11 +30,15 @@ def upgrade() -> None:
     op.create_table('customers',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('public_id', sa.String(length=32), nullable=False),
+    sa.Column('contact_name', sa.String(length=120), nullable=True),
     sa.Column('business_name', sa.String(length=160), nullable=False),
     sa.Column('mobile', sa.String(length=20), nullable=False),
+    sa.Column('email', sa.String(length=160), nullable=True),
+    sa.Column('profile_image_url', sa.String(length=500), nullable=True),
     sa.Column('gst_number', sa.String(length=24), nullable=True),
     sa.Column('level', sa.String(length=40), nullable=False),
     sa.Column('account_manager', sa.String(length=120), nullable=True),
+    sa.Column('security_note', sa.String(length=160), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -255,4 +259,3 @@ def downgrade() -> None:
     op.drop_table('customers')
     op.drop_table('audit_logs')
     # ### end Alembic commands ###
-
