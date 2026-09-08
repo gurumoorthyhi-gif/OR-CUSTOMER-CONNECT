@@ -2,6 +2,10 @@
 
 Digital operating system for ODD RAVEN DTF printing: a simple customer PWA backed by order, artwork, production, payment, courier, CRM, and reporting operations.
 
+## Codex Startup
+
+Read [CODEX_STARTUP.md](CODEX_STARTUP.md) before running or modifying the project. It contains the canonical setup, service ports, ERP Messages workflow, and data-preservation rules for another system.
+
 ## Repository Layout
 
 - `docs/phases` - detailed phase plans and acceptance criteria.
