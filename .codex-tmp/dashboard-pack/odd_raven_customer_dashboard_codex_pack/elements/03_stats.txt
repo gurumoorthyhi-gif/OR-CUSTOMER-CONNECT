@@ -1,0 +1,5 @@
+TOP KPI CARDS
+1. Active Orders — 3 — View Orders
+2. Need Approval — 1 — Review Now
+3. Payment Due — ₹2,450 — View Invoices
+4. Dispatched — 2 — Track Orders

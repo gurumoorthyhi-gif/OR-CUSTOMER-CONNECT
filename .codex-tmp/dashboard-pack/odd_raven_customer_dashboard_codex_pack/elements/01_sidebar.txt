@@ -1,0 +1,24 @@
+SIDEBAR
+Brand: ODD RAVEN
+Sub-brand: DTF
+Tagline: PRINT BOLDER
+
+Navigation:
+1. Dashboard
+2. New Order
+3. Orders
+4. Designs & Gangsheets
+5. Production & Tracking
+6. Payments & Invoices
+7. Chat / Support — unread badge: 3
+8. Level & Benefits
+9. Addresses
+10. Settings
+
+Bottom promo:
+- T-shirt visual
+- Text: DTF PRINTING FOR BRANDS THAT GROW
+
+Help box:
+- Need Help?
+- We're here for you.

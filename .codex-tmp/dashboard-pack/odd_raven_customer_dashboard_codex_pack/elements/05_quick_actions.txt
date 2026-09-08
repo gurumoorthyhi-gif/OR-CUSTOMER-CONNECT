@@ -1,0 +1,27 @@
+QUICK ACTIONS
+Section title: Quick Actions
+Section helper: Everything you need, in one place.
+
+Orders
+View, manage and reorder your past and current orders.
+
+Designs & Gangsheets
+Upload designs, manage gangsheets and reuse previous files.
+
+Chat / Support
+Chat with our team (General or order-specific).
+
+Production & Tracking
+See real-time production status and courier tracking.
+
+Payments & Invoices
+View invoices, make payments and download GST bills.
+
+Level & Benefits
+Check your level, current rates and unlock more benefits.
+
+Addresses
+Manage your shipping and billing addresses.
+
+Settings
+Profile, business details, notifications and more.
