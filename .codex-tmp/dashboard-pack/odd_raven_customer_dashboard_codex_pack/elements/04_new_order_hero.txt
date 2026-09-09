@@ -1,0 +1,6 @@
+NEW ORDER HERO
+Eyebrow: GET STARTED
+Title: Create a New Order
+Body: Upload your designs, choose quantity, preview and place your order in minutes.
+Primary button: + New Order
+Background: dark DTF-print visual with strong left-side dark overlay.

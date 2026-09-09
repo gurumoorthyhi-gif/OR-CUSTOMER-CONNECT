@@ -1,0 +1,25 @@
+ODD RAVEN Customer Dashboard — Font Guide
+
+PRIMARY FONT
+- Inter
+- Fallback: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif
+
+RECOMMENDED WEIGHTS
+- 400 Regular: body copy, secondary text
+- 500 Medium: labels, table content, navigation
+- 600 SemiBold: card titles, buttons, headings
+- 700 Bold: major numbers, greeting, main CTA
+- 800 ExtraBold: optional for large numerical KPI emphasis
+
+TYPE SCALE
+- 32px / 1.15 — Main greeting: "Hi, GURU"
+- 28–30px / 1.15 — Hero title: "Create a New Order"
+- 24px / 1.2 — KPI values
+- 18px / 1.25 — Section titles
+- 16px / 1.35 — Card titles / navigation
+- 14px / 1.45 — Standard body and table text
+- 12px / 1.4 — Captions / eyebrow labels / footer
+
+NOTES
+- Use Inter through your package manager/CDN or the user's own font source.
+- Font files are intentionally NOT included in this ZIP.

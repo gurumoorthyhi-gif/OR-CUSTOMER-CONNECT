@@ -1,0 +1,43 @@
+You are implementing the ODD RAVEN DTF customer portal dashboard.
+
+Use the files in this package as the source of truth:
+- `00_REFERENCE_DASHBOARD.png` = visual reference
+- `UI_SPECIFICATION.md` = layout/behavior requirements
+- `DASHBOARD_CONTENT.json` = exact visible copy and mock data
+- `DESIGN_TOKENS.json` = colors, spacing, radius and typography tokens
+- `FONT_GUIDE.txt` = font usage
+- `/icons/*.svg` = local icon assets
+- `/assets/*` = visual reference crops / placeholders
+- `/elements/*` = human-readable section content
+
+IMPLEMENTATION RULES
+1. First inspect the existing repository and reuse its framework, routing, state management and component conventions.
+2. If there is no frontend yet, create a React + TypeScript + Vite frontend with Tailwind CSS and React Router.
+3. Build the dashboard as reusable components, not one large component.
+4. Match the reference closely in hierarchy, spacing, density and alignment, but make the implementation responsive and production-quality rather than pixel-hardcoding a 1024px screenshot.
+5. Use Inter or the system fallback stack listed in `FONT_GUIDE.txt`. Do not bundle font binaries from this ZIP.
+6. Use the SVG files from `/icons`; keep icons as `currentColor` so their color is controlled by CSS.
+7. Implement all sidebar navigation items and routes. Placeholder pages are acceptable for routes not yet built, but Dashboard must be complete.
+8. Add accessible hover/focus/active states and semantic HTML.
+9. Make the table responsive on mobile.
+10. Keep visible text exactly as defined in `DASHBOARD_CONTENT.json`, except where live user/account data will later replace mock values.
+11. Use `assets/hero_print_reference.png` and `assets/sidebar_promo_reference.png` only as temporary visuals; structure the code so they can be replaced easily.
+12. The logo crop is a visual reference only. If the repository already contains an ODD RAVEN logo, use the real logo instead.
+13. Do not add unrelated admin analytics, charts or features.
+14. Before finishing, run the project's formatter/linter/build and fix any errors.
+
+DELIVERABLE
+Create a polished customer dashboard that feels like a professional DTF ordering portal, with:
+- fixed/collapsible sidebar
+- greeting/header
+- Level 3 progress
+- KPI cards
+- Create New Order hero CTA
+- Quick Actions
+- Recent Orders
+- Level Progress
+- Reorder card
+- footer
+- responsive mobile/tablet behavior
+
+Use the visual reference to match the design language while following the text specifications exactly.

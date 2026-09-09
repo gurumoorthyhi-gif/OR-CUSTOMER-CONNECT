@@ -1,0 +1,11 @@
+RECENT ORDERS
+Columns:
+Order ID | Date | Designs | Quantity | Status | Action
+
+OR-1058 | 08 Sep 2026 | 12 designs | 15 metres | Printing | View
+OR-1055 | 06 Sep 2026 | 8 designs | 10 metres | Awaiting Approval | View
+OR-1049 | 02 Sep 2026 | 20 designs | 25 metres | Dispatched | Track
+OR-1042 | 28 Aug 2026 | 6 designs | 8 metres | Delivered | View
+OR-1038 | 24 Aug 2026 | 10 designs | 12 metres | Completed | Reorder
+
+Top-right action: View All Orders

@@ -1,0 +1,43 @@
+{
+  "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Arial, sans-serif",
+  "colors": {
+    "sidebar": "#121820",
+    "sidebarHover": "#25303C",
+    "page": "#F7F9FC",
+    "surface": "#FFFFFF",
+    "surfaceMuted": "#F3F6FA",
+    "textPrimary": "#0F172A",
+    "textSecondary": "#5B6478",
+    "border": "#E3E8EF",
+    "blue": "#1463FF",
+    "blueSoft": "#E8F2FF",
+    "orange": "#F47B20",
+    "orangeSoft": "#FFF1E3",
+    "red": "#EF3340",
+    "redSoft": "#FDE8EC",
+    "green": "#14A44D",
+    "greenSoft": "#E7F7ED",
+    "purple": "#6D35C9",
+    "purpleSoft": "#F0E9FF",
+    "yellow": "#F0A500",
+    "yellowSoft": "#FFF4CC",
+    "white": "#FFFFFF"
+  },
+  "radius": {
+    "small": "8px",
+    "medium": "12px",
+    "large": "16px"
+  },
+  "shadow": {
+    "card": "0 1px 2px rgba(15,23,42,.05), 0 8px 24px rgba(15,23,42,.05)",
+    "hover": "0 10px 30px rgba(15,23,42,.10)"
+  },
+  "layout": {
+    "desktopReferenceWidth": 1024,
+    "desktopReferenceHeight": 1536,
+    "sidebarWidthReference": 209,
+    "mainContentPaddingReference": 20,
+    "contentMaxWidth": "1280px",
+    "gridGap": "14px"
+  }
+}

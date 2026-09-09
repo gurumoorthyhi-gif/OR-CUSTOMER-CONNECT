@@ -1,0 +1,11 @@
+HEADER
+Greeting: Hi, GURU
+Secondary: Good afternoon! 👋
+Description: Let's bring your designs to life.
+
+Right side:
+- Notification bell, badge 3
+- Level card: Level 3
+- Progress: 72 / 100 m to Level 4
+- User avatar: G
+- Profile dropdown chevron

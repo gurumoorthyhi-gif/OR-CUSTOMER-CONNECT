@@ -1,0 +1,224 @@
+{
+  "brand": {
+    "name": "ODD RAVEN",
+    "subbrand": "DTF",
+    "tagline": "PRINT BOLDER"
+  },
+  "header": {
+    "greeting": "Hi, GURU",
+    "subGreeting": "Good afternoon! 👋",
+    "description": "Let's bring your designs to life.",
+    "notificationCount": 3,
+    "level": "Level 3",
+    "levelProgress": "72 / 100 m to Level 4",
+    "profileInitial": "G"
+  },
+  "sidebar": [
+    {
+      "label": "Dashboard",
+      "icon": "home.svg",
+      "route": "/dashboard"
+    },
+    {
+      "label": "New Order",
+      "icon": "plus-square.svg",
+      "route": "/new-order"
+    },
+    {
+      "label": "Orders",
+      "icon": "receipt.svg",
+      "route": "/orders"
+    },
+    {
+      "label": "Designs & Gangsheets",
+      "icon": "image.svg",
+      "route": "/designs"
+    },
+    {
+      "label": "Production & Tracking",
+      "icon": "truck.svg",
+      "route": "/tracking"
+    },
+    {
+      "label": "Payments & Invoices",
+      "icon": "card.svg",
+      "route": "/payments"
+    },
+    {
+      "label": "Chat / Support",
+      "icon": "chat.svg",
+      "route": "/support",
+      "badge": 3
+    },
+    {
+      "label": "Level & Benefits",
+      "icon": "star.svg",
+      "route": "/level"
+    },
+    {
+      "label": "Addresses",
+      "icon": "pin.svg",
+      "route": "/addresses"
+    },
+    {
+      "label": "Settings",
+      "icon": "settings.svg",
+      "route": "/settings"
+    }
+  ],
+  "stats": [
+    {
+      "label": "Active Orders",
+      "value": "3",
+      "action": "View Orders",
+      "icon": "shopping-bag.svg",
+      "tone": "blue"
+    },
+    {
+      "label": "Need Approval",
+      "value": "1",
+      "action": "Review Now",
+      "icon": "clipboard-check.svg",
+      "tone": "orange"
+    },
+    {
+      "label": "Payment Due",
+      "value": "₹2,450",
+      "action": "View Invoices",
+      "icon": "rupee.svg",
+      "tone": "red"
+    },
+    {
+      "label": "Dispatched",
+      "value": "2",
+      "action": "Track Orders",
+      "icon": "truck.svg",
+      "tone": "green"
+    }
+  ],
+  "hero": {
+    "eyebrow": "GET STARTED",
+    "title": "Create a New Order",
+    "description": "Upload your designs, choose quantity, preview and place your order in minutes.",
+    "button": "New Order",
+    "icon": "plus.svg",
+    "image": "assets/hero_print_reference.png"
+  },
+  "quickActions": [
+    {
+      "title": "Orders",
+      "description": "View, manage and reorder your past and current orders.",
+      "icon": "receipt.svg",
+      "tone": "blue"
+    },
+    {
+      "title": "Designs & Gangsheets",
+      "description": "Upload designs, manage gangsheets and reuse previous files.",
+      "icon": "image.svg",
+      "tone": "purple"
+    },
+    {
+      "title": "Chat / Support",
+      "description": "Chat with our team (General or order-specific).",
+      "icon": "chat.svg",
+      "tone": "green"
+    },
+    {
+      "title": "Production & Tracking",
+      "description": "See real-time production status and courier tracking.",
+      "icon": "truck.svg",
+      "tone": "orange"
+    },
+    {
+      "title": "Payments & Invoices",
+      "description": "View invoices, make payments and download GST bills.",
+      "icon": "card.svg",
+      "tone": "red"
+    },
+    {
+      "title": "Level & Benefits",
+      "description": "Check your level, current rates and unlock more benefits.",
+      "icon": "star.svg",
+      "tone": "yellow"
+    },
+    {
+      "title": "Addresses",
+      "description": "Manage your shipping and billing addresses.",
+      "icon": "pin.svg",
+      "tone": "red"
+    },
+    {
+      "title": "Settings",
+      "description": "Profile, business details, notifications and more.",
+      "icon": "settings.svg",
+      "tone": "slate"
+    }
+  ],
+  "recentOrders": [
+    {
+      "orderId": "OR-1058",
+      "date": "08 Sep 2026",
+      "designs": "12 designs",
+      "quantity": "15 metres",
+      "status": "Printing",
+      "action": "View"
+    },
+    {
+      "orderId": "OR-1055",
+      "date": "06 Sep 2026",
+      "designs": "8 designs",
+      "quantity": "10 metres",
+      "status": "Awaiting Approval",
+      "action": "View"
+    },
+    {
+      "orderId": "OR-1049",
+      "date": "02 Sep 2026",
+      "designs": "20 designs",
+      "quantity": "25 metres",
+      "status": "Dispatched",
+      "action": "Track"
+    },
+    {
+      "orderId": "OR-1042",
+      "date": "28 Aug 2026",
+      "designs": "6 designs",
+      "quantity": "8 metres",
+      "status": "Delivered",
+      "action": "View"
+    },
+    {
+      "orderId": "OR-1038",
+      "date": "24 Aug 2026",
+      "designs": "10 designs",
+      "quantity": "12 metres",
+      "status": "Completed",
+      "action": "Reorder"
+    }
+  ],
+  "levelProgress": {
+    "title": "Your Level Progress",
+    "level": "Level 3",
+    "progress": 72,
+    "currentMetres": 72,
+    "targetMetres": 100,
+    "remainingText": "28 metres more to reach Level 4",
+    "nextLevelRate": "₹150/m"
+  },
+  "reorder": {
+    "title": "Reorder in Seconds",
+    "description": "Use your previous designs and settings to place a new order quickly.",
+    "button": "Browse Previous Orders",
+    "icon": "refresh.svg"
+  },
+  "footer": {
+    "brand": "ODD RAVEN DTF",
+    "tagline": "Print Bolder. Grow Bigger.",
+    "links": [
+      "Privacy",
+      "Terms",
+      "Help",
+      "Contact"
+    ]
+  }
+}

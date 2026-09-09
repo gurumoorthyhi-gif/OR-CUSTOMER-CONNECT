@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>KMS DTF ERP</title>
+  <link rel="icon" type="image/png" href="/brand/kms_dtf_erp_logo.png?v=20260815-1">
+  <link rel="stylesheet" href="/assets/styles.css?v=20260908-1">
+  <link rel="stylesheet" href="/assets/parity.css?v=20260908-1">
+</head>
+<body>
+  <section id="login-view" class="login-page">
+    <form id="login-form" class="login-card">
+      <div class="brand-mark"><img src="/brand/kms_dtf_erp_logo.png?v=20260815-1" alt="KMS logo"></div>
+      <p class="eyebrow">DTF PRINTING OPERATIONS</p>
+      <h1>Welcome back</h1>
+      <p class="muted">Sign in to your centralized production workspace.</p>
+      <label>Username<input name="username" autocomplete="username" required></label>
+      <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+      <label>Company<input name="organization_slug" value="kms" required></label>
+      <button class="primary" type="submit">Sign in</button>
+      <p id="login-error" class="error" role="alert"></p>
+    </form>
+  </section>
+
+  <div id="app-view" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand"><img src="/brand/kms_dtf_erp_logo.png?v=20260815-1" alt="KMS logo"><small>DTF ERP</small></div>
+      <nav id="navigation">
+        <button data-view="dashboard" class="active">Dashboard</button>
+        <button data-view="admin_console">Admin Console</button>
+        <button data-view="messages">Messages</button>
+        <button data-view="customers">Customers</button>
+        <button data-view="orders">Orders</button>
+        <button data-view="studio">Artwork Studio</button>
+        <button data-view="image_editor">Image Editor</button>
+        <button data-view="inventory">Inventory</button>
+        <button data-view="purchases">Purchase</button>
+        <button data-view="sales">Sales</button>
+        <button data-view="invoices">Invoices</button>
+        <button data-view="payments">Payments</button>
+        <button data-view="products">Products</button>
+        <button data-view="artwork">Artwork Library</button>
+        <button data-view="suppliers">Suppliers</button>
+        <button data-view="packing">Packing</button>
+        <button data-view="dispatch">Dispatch</button>
+        <button data-view="whatsapp">WhatsApp</button>
+        <button data-view="email">Mail</button>
+        <button data-view="ai_tools">AI Tools</button>
+        <button data-view="cloud_storage">Cloud Storage</button>
+        <button data-view="operations">Reports &amp; Backup</button>
+        <button data-view="settings">Settings</button>
+        <button data-view="users">Users</button>
+      </nav>
+      <div class="account"><strong id="account-name"></strong><small id="account-org"></small><button id="logout">Sign out</button></div>
+    </aside>
+    <main>
+      <header class="topbar"><button id="menu-button" aria-label="Toggle menu">☰</button><div><p class="eyebrow">KMS OPERATIONS</p><h1 id="page-title">Overview</h1></div><span id="developer-badge" class="status hidden">Developer Mode</span><span id="connection" class="status">Online</span></header>
+      <div id="notice" class="notice hidden" role="status"></div>
+
+      <section id="dashboard" class="page">
+        <div class="page-actions"><strong>Overview period</strong><select id="dashboard-period"><option value="today">Today</option><option value="last_7_days">Last 7 days</option><option value="last_30_days">Last 30 days</option></select></div>
+        <div class="stats"><article><span>Total orders</span><strong id="metric-orders">0</strong></article><article><span>Pending</span><strong id="metric-pending">0</strong></article><article><span>In production</span><strong id="metric-production">0</strong></article><article><span>Completed</span><strong id="metric-completed">0</strong></article><article><span>Pending payments</span><strong id="metric-payments">0</strong></article><article><span>Revenue</span><strong id="metric-revenue">INR 0.00</strong></article></div>
+        <div class="dashboard-grid"><div class="panel"><div class="panel-head"><h3>Production pipeline</h3></div><div id="pipeline" class="pipeline"></div></div><div class="panel"><div class="panel-head"><h3>Recent activity</h3></div><div id="recent-activity" class="activity-list"></div></div><div class="panel"><div class="panel-head"><h3>Low stock</h3></div><div id="low-stock" class="activity-list"></div></div><div class="panel"><div class="panel-head"><h3>Quick actions</h3></div><div class="quick-actions"><button data-action="refresh-dashboard">Refresh dashboard</button><button data-view-link="settings">Open settings</button></div></div></div>
+      </section>
+
+      <section id="admin_console" class="page hidden">
+        <div class="page-actions admin-console-head">
+          <div>
+            <strong>Staff operations hub</strong>
+            <small>Internal control center for customer communication, files, orders, payments and production.</small>
+          </div>
+          <div>
+            <button data-action="refresh-dashboard">Refresh ERP</button>
+            <a class="button-link primary" href="http://localhost:3000/admin" target="_blank" rel="noreferrer">Customer App Admin</a>
+          </div>
+        </div>
+        <div class="admin-console-grid">
+          <article class="admin-console-card" data-view-link="customers">
+            <span>Customer Files</span>
+            <strong>Customers &amp; folders</strong>
+            <p>Open customer records, date folders, design files, invoices, payment receipts and previews.</p>
+            <button data-view-link="customers">Open customers</button>
+          </article>
+          <article class="admin-console-card" data-view-link="orders">
+            <span>Orders</span>
+            <strong>ERP order flow</strong>
+            <p>Create orders, attach imported designs, inspect order details and move jobs through statuses.</p>
+            <button data-view-link="orders">Open orders</button>
+          </article>
+          <article class="admin-console-card" data-view-link="payments">
+            <span>Payments</span>
+            <strong>Ledger control</strong>
+            <p>Review payment work, balances, invoices and customer account follow-up from one staff page.</p>
+            <button data-view-link="payments">Open payments</button>
+          </article>
+          <article class="admin-console-card" data-view-link="messages">
+            <span>Messages</span>
+            <strong>Staff messaging</strong>
+            <p>Open the staff customer conversation workspace inside this ERP.</p>
+            <div class="card-actions">
+              <button data-view-link="messages">Open Messages</button>
+            </div>
+          </article>
+          <article class="admin-console-card" data-view-link="studio">
+            <span>Production</span>
+            <strong>Artwork to dispatch</strong>
+            <p>Move work through studio, image editor, inventory, packing, dispatch and production checks.</p>
+            <div class="card-actions">
+              <button data-view-link="studio">Open studio</button>
+              <button data-view-link="dispatch">Dispatch</button>
+            </div>
+          </article>
+          <article class="admin-console-card" data-view-link="operations">
+            <span>Reports</span>
+            <strong>Operations &amp; backup</strong>
+            <p>Use reports, backups, cloud storage, settings and users for long-term admin control.</p>
+            <div class="card-actions">
+              <button data-view-link="operations">Reports</button>
+              <button data-view-link="settings">Settings</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="messages" class="page hidden messages-page">
+        <iframe id="staff-messages-frame" title="Staff messages"></iframe>
+      </section>
+
+      <section id="customers" class="page hidden">
+        <div class="page-actions"><input id="customer-search" placeholder="Search name, business, or phone"><div><select id="customer-status"><option value="true">Active</option><option value="all">All customers</option><option value="false">Inactive</option></select><button class="primary" data-action="new-customer">New customer</button></div></div>
+        <div class="panel"><div class="panel-head"><h3>Customers</h3></div><div id="customer-list" class="table-wrap"></div></div>
+      </section>
+
+      <section id="products" class="page hidden">
+        <div class="page-actions"><input id="product-search" placeholder="Search products"><div><button data-action="new-category">Add category</button><button class="primary" data-action="new-product">Add product</button></div></div>
+        <div class="panel"><div class="panel-head"><h3>Products and pricing</h3></div><div id="product-list" class="table-wrap"></div></div>
+      </section>
+
+      <section id="orders" class="page hidden">
+        <div class="page-actions"><input id="order-search" placeholder="Search order number or customer"><button class="primary" data-action="new-order">New order</button></div>
+        <div class="panel"><div class="panel-head"><h3>Orders</h3></div><div id="order-list" class="table-wrap"></div></div>
+      </section>
+
+      <section id="artwork" class="page hidden">
+        <div class="page-actions"><input id="artwork-search" placeholder="Search design, customer or order"><button class="primary" data-action="new-artwork">Upload design</button></div>
+        <div class="panel"><div class="panel-head"><h3>Private design library</h3></div><div id="artwork-list" class="table-wrap"></div></div>
+      </section>
+      <section id="studio" class="page hidden"><div class="panel"><div class="panel-head"><h3>Artwork Studio</h3></div><div class="empty">Gang-sheet workflow is being connected.</div></div></section>
+      <section id="image_editor" class="page hidden"><div class="panel"><div class="panel-head"><h3>Image Editor</h3></div><div class="empty">Editor tools, layers, channels and export are being ported.</div></div></section>
+      <section id="inventory" class="page hidden"><div class="panel"><div class="panel-head"><h3>Inventory</h3></div><div class="empty">Inventory and stock movements are being connected.</div></div></section>
+      <section id="purchases" class="page hidden"><div class="panel"><div class="panel-head"><h3>Purchase</h3></div><div class="empty">Purchasing and receiving are being connected.</div></div></section>
+      <section id="sales" class="page hidden"><div class="panel"><div class="panel-head"><h3>Sales</h3></div><div class="empty">Sales workflow is being connected.</div></div></section>
+      <section id="invoices" class="page hidden"><div class="panel"><div class="panel-head"><h3>Invoices</h3></div><div class="empty">Invoice workflow is being connected.</div></div></section>
+      <section id="payments" class="page hidden"><div class="panel"><div class="panel-head"><h3>Payments</h3></div><div class="empty">Payments and ledgers are being connected.</div></div></section>
+      <section id="suppliers" class="page hidden"><div class="panel"><div class="panel-head"><h3>Suppliers</h3></div><div class="empty">Supplier workflow is being connected.</div></div></section>
+      <section id="packing" class="page hidden"><div class="panel"><div class="panel-head"><h3>Packing</h3></div><div class="empty">Packing workflow is being connected.</div></div></section>
+      <section id="dispatch" class="page hidden"><div class="panel"><div class="panel-head"><h3>Dispatch</h3></div><div class="empty">Dispatch and tracking are being connected.</div></div></section>
+      <section id="whatsapp" class="page hidden"><div class="panel"><div class="panel-head"><h3>WhatsApp</h3></div><div class="empty">WhatsApp workspace is being connected.</div></div></section>
+      <section id="email" class="page hidden"><div class="panel"><div class="panel-head"><h3>Mail</h3></div><div class="empty">Mail workspace is being connected.</div></div></section>
+      <section id="ai_tools" class="page hidden"><div class="panel"><div class="panel-head"><h3>AI Tools</h3></div><div class="empty">AI jobs and artwork results are being connected.</div></div></section>
+      <section id="cloud_storage" class="page hidden"><div class="panel"><div class="panel-head"><h3>Cloud Storage</h3></div><div class="empty">Cloud catalog and transfers are being connected.</div></div></section>
+      <section id="operations" class="page hidden"><div class="panel"><div class="panel-head"><h3>Reports &amp; Backup</h3></div><div class="empty">Reports, backups and audit history are being connected.</div></div></section>
+      <section id="settings" class="page hidden"><div class="panel"><div class="panel-head"><h3>Settings</h3></div><div class="empty">Application and integration settings are being connected.</div></div></section>
+      <section id="users" class="page hidden"><div class="panel"><div class="panel-head"><h3>Users</h3></div><div class="empty">User and role management will replace Developer Mode.</div></div></section>
+    </main>
+  </div>
+
+  <dialog id="customer-dialog" class="customer-erp-dialog"><form id="customer-form"><input name="id" type="hidden"><input name="code" type="hidden"><div class="dialog-head"><h2 id="customer-form-title">New customer</h2><button type="button" data-close>&times;</button></div><div class="customer-form-columns"><section class="customer-form-panel"><h3>Customer details</h3><div class="erp-form"><label>Customer name *<input name="name" required></label><label>Business name<input name="business_name"></label><label>Phone *<input name="phone" required></label><label>Email<input name="email" type="email"></label><label>GST number<input name="gst_number" maxlength="15"></label><label>Preferred rate<input name="preferred_rate" type="number" min="0" step="0.01" value="0.00"></label><label>WhatsApp number<input name="whatsapp_number"></label><label>Delivery type<select name="delivery_type"><option>Courier</option><option>Local</option></select></label><label data-courier>Preferred courier *<select name="preferred_courier" required><option value="">Select preferred courier</option><option>ST</option><option>PROFESSIONAL</option><option>DTDC</option><option>BUS</option><option>TRAIN</option><option>OTHER TRANSPORT</option></select></label><label data-other-transport class="hidden">Other transport name *<input name="other_transport_name"></label></div><label class="notes-label">Notes<textarea name="notes" placeholder="Customer notes"></textarea></label></section><section class="customer-form-panel address-panel"><h3>Billing and shipping details</h3><div class="address-scroll"><h4>Billing address</h4><div class="erp-form address-form"><label>Door No.<input name="billing_line1"></label><label>Street name<input name="billing_line2"></label><label>Village / City<input name="billing_city"></label><label>Landmark<input name="billing_landmark"></label><label>Pincode<input name="billing_postal_code" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit pincode"></label><label>District<input name="billing_district"></label><label>State<input name="billing_state" list="india-states" placeholder="Type to search state"></label><label>Country<input name="billing_country" value="India" readonly></label></div><h4>Shipping address</h4><div class="erp-form address-form"><label>Door No.<input name="shipping_line1"></label><label>Street name<input name="shipping_line2"></label><label>Village / City<input name="shipping_city"></label><label>Landmark<input name="shipping_landmark"></label><label>Pincode<input name="shipping_postal_code" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit pincode"></label><label>District<input name="shipping_district"></label><label>State<input name="shipping_state" list="india-states" placeholder="Type to search state"></label><label>Country<input name="shipping_country" value="India" readonly></label></div></div></section></div><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary">Save</button></div></form></dialog>
+  <datalist id="india-states"><option>Andaman and Nicobar Islands</option><option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option><option>Bihar</option><option>Chandigarh</option><option>Chhattisgarh</option><option>Dadra and Nagar Haveli and Daman and Diu</option><option>Delhi</option><option>Goa</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jammu and Kashmir</option><option>Jharkhand</option><option>Karnataka</option><option>Kerala</option><option>Ladakh</option><option>Lakshadweep</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option><option>Odisha</option><option>Puducherry</option><option>Punjab</option><option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option><option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option></datalist>
+  <dialog id="customer-details-dialog"><div class="dialog-body"><div class="dialog-head"><h2 id="customer-details-title">Customer</h2><button type="button" data-close>&times;</button></div><div id="customer-details-content"></div><div class="dialog-actions"><button data-action="customer-folder">Open folder</button><button data-action="edit-current-customer">Edit</button><button type="button" data-close>Close</button></div></div></dialog>
+  <dialog id="customer-folder-dialog" class="folder-dialog"><div class="dialog-body folder-shell"><div class="dialog-head"><div><h2 id="folder-title">Customer folder</h2><small id="folder-prefix"></small></div><div><button data-action="folder-small" title="Small window">&minus;</button><button data-action="folder-maximize" title="Maximize">&#9633;</button><button type="button" data-close>&times;</button></div></div><div class="folder-workspace"><section class="folder-browser"><aside class="folder-tree-panel"><div class="tree-toolbar"><button data-action="folder-back">&larr; Back</button><span id="folder-location">Customer</span></div><div id="customer-folder-tree" class="folder-tree"></div><div class="tree-actions"><button class="primary" data-action="create-date-folder">Create Folders</button><button data-action="search-customer-files" title="Search all customer files">&#128269;</button><label class="icon-upload" title="Search using an image">&#9639;<input id="customer-image-search" type="file" accept="image/*"></label></div><input id="customer-file-search" class="hidden" placeholder="Customer/design number, filename, or date"></aside><section class="folder-file-panel"><div class="file-toolbar"><label class="button-like">Upload<input id="customer-file-upload" type="file" multiple></label><button data-action="edit-selected-file">Edit</button><button data-action="copy-selected-files">Copy To</button><button class="danger" data-action="delete-selected-files">Delete</button><button data-action="open-selected-file">Open</button><button data-action="download-selected-files">Download</button><input id="replace-customer-file" type="file" class="hidden"></div><div class="table-wrap"><table class="folder-file-table"><thead><tr><th>Select</th><th>File</th><th>Size</th><th>Status</th><th>Uploaded</th></tr></thead><tbody id="customer-file-list"></tbody></table></div></section></section><aside class="folder-preview-panel"><h3>Preview</h3><div id="customer-file-preview" class="customer-file-preview"><span>Select an image or PDF to preview</span></div><p id="customer-preview-name">No file selected</p></aside></div></div></dialog>
+  <dialog id="copy-files-dialog"><form id="copy-files-form"><div class="dialog-head"><h2>Copy files to</h2><button type="button" data-close>&times;</button></div><label>Customer<select name="customer_id"></select></label><label>Date folder<select name="date_name"></select></label><label>Folder<select name="folder_name"><option>Design</option></select></label><p id="copy-files-message" class="muted"></p><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary">OK</button></div></form></dialog>
+  <dialog id="customer-image-editor-dialog" class="folder-dialog"><div class="dialog-body folder-shell"><div class="dialog-head"><h2 id="customer-editor-title">Image Editor</h2><button type="button" data-close>&times;</button></div><div class="file-toolbar"><button disabled title="Available in the full Image Editor stage">BG Remove</button><button disabled>Upscale</button><button disabled>Eraser</button><button disabled>Select</button><button disabled>Colour Change</button></div><div id="customer-editor-preview" class="customer-editor-preview"></div></div></dialog>
+  <dialog id="category-dialog"><form id="category-form"><div class="dialog-head"><h2>Add category</h2><button type="button" data-close>×</button></div><label>Category name<input name="name" required></label><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary">Save</button></div></form></dialog>
+  <dialog id="product-dialog"><form id="product-form"><div class="dialog-head"><h2>Add product</h2><button type="button" data-close>×</button></div><div class="form-grid"><label>Code<input name="code" required></label><label>Name<input name="name" required></label><label>Category<select name="category_id" required></select></label><label>Unit<input name="unit" value="piece"></label><label>Base price<input name="base_price" type="number" min="0" step="0.01" required></label><label>Tax %<input name="tax_rate" type="number" min="0" max="100" step="0.01" value="0"></label></div><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary">Save product</button></div></form></dialog>
+  <dialog id="order-dialog" class="order-dialog"><form id="order-form"><div class="dialog-head"><h2>New order</h2><button type="button" data-close>&times;</button></div><div class="erp-form order-form-fields"><label>Customer<div class="inline-field"><select name="customer_id" required><option value="">Select customer</option></select><button type="button" data-action="order-add-customer">Add new customer</button></div></label><label>Product type<select name="order_type"><option>DTF</option><option>T-Shirt</option><option>DTF + T-Shirt</option></select></label><label>Customer design<label class="button-like">Import design<input id="order-design-input" type="file" multiple accept=".png,.jpg,.jpeg,.webp,.bmp,.tif,.tiff,.pdf,.svg,.ai,.eps,.cdr"></label></label></div><p id="order-design-status" class="muted">Select a customer before importing designs</p><h3>Uploaded design previews</h3><div id="order-design-previews" class="order-design-previews"></div><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary">Save</button></div></form></dialog>
+  <dialog id="order-details-dialog"><div class="dialog-body"><div class="dialog-head"><h2 id="order-details-title">Order</h2><button type="button" data-close>&times;</button></div><div id="order-details-content"></div><h3>Status timeline</h3><div id="order-status-timeline" class="status-timeline"></div><div class="status-change"><select id="order-detail-status"></select><input id="order-status-note" placeholder="Status note"><button class="primary" data-action="change-order-status">Change status</button></div><div class="dialog-actions"><button data-action="open-order-designs">Open designs</button><button type="button" data-close>Close</button></div></div></dialog>
+  <dialog id="design-preview-dialog" class="folder-dialog"><div class="dialog-body folder-shell"><div class="dialog-head"><h2 id="design-preview-title">Design preview</h2><button type="button" data-close>&times;</button></div><div id="design-preview-content" class="customer-editor-preview checkerboard"></div></div></dialog>
+  <dialog id="artwork-dialog"><form id="artwork-form"><div class="dialog-head"><h2>Upload design</h2><button type="button" data-close>&times;</button></div><div class="form-grid"><label>Design file<input name="file" type="file" accept=".cdr,.pdf,.png,.jpg,.jpeg,.webp,.tif,.tiff" required></label><label>Title<input name="title"></label><label>Customer<select name="customer_id"><option value="">None</option></select></label><label>Order<select name="order_id"><option value="">None</option></select></label><label>Tags<input name="tags" placeholder="logo, urgent, white ink"></label></div><label>Version notes<textarea name="notes"></textarea></label><div class="dialog-actions"><button type="button" data-close>Cancel</button><button class="primary">Upload securely</button></div></form></dialog>
+  <script src="/assets/app.js?v=20260908-1" defer></script>
+</body>
+</html>
