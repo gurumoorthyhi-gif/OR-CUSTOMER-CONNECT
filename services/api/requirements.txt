@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+sqlalchemy
+alembic
+psycopg[binary]
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+redis
+celery
+boto3
+pillow
+playwright
+pytest
+httpx
+ruff

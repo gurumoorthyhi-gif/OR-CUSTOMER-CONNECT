@@ -1,0 +1,14 @@
+{
+  "name": "odd-raven-platform",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "web:dev": "npm --prefix apps/web run dev",
+    "web:build": "npm --prefix apps/web run build",
+    "web:audit": "npm --prefix apps/web audit --audit-level=moderate",
+    "api:init-db": "\".venv\\Scripts\\python.exe\" -m services.api.app.db.init_db",
+    "api:test": "\".venv\\Scripts\\pytest.exe\"",
+    "api:lint": "\".venv\\Scripts\\ruff.exe\" check services/api",
+    "check": "npm run api:init-db && npm run api:test && npm run api:lint && npm run web:build && npm run web:audit"
+  }
+}
