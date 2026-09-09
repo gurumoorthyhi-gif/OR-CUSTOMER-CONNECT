@@ -1,3 +1,5 @@
+import asyncio
+import sys
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -12,6 +14,10 @@ from services.api.app.modules.messages.routes import UPLOAD_DIR
 from services.api.app.modules.image_processing.routes import PROCESSING_DIR
 from services.api.app.modules.image_processing.workers import worker_manager
 from services.api.app.routers import api_router
+
+
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 
 @asynccontextmanager

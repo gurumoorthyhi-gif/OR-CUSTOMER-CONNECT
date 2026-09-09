@@ -1,6 +1,8 @@
 import asyncio
+import logging
 from datetime import datetime, timedelta
 from pathlib import Path
+from time import monotonic
 
 from PIL import Image
 from sqlalchemy import select
@@ -9,7 +11,10 @@ from services.api.app.core.config import settings
 from services.api.app.db.session import SessionLocal
 from services.api.app.models import ImageProcessingJob
 from services.api.app.modules.image_processing.pixelcut import PixelcutBrowserProvider
+from services.api.app.modules.image_processing.readiness import error_code, error_message
 from services.api.app.modules.image_processing.routes import PROCESSING_DIR
+
+logger = logging.getLogger(__name__)
 
 
 def trim_transparent_pixels(source: Path, destination: Path) -> None:
@@ -35,6 +40,7 @@ class PixelcutWorkerManager:
         self.registry: dict[str, dict] = {}
 
     async def start(self) -> None:
+        self.stopping = False
         if not settings.pixelcut_enabled:
             return
         self._recover_stale_jobs()
@@ -89,22 +95,31 @@ class PixelcutWorkerManager:
         self.registry[worker_id] = {"type": worker_type, "state": "STARTING", "currentJob": None, "lastError": None, "jobsProcessed": 0}
         try:
             await provider.start()
-            self.registry[worker_id]["state"] = "AVAILABLE"
+            last_connection_check = 0.0
             while not self.stopping:
+                if self.registry[worker_id]["state"] not in {"AVAILABLE", "BUSY"} or monotonic() - last_connection_check >= 30:
+                    try:
+                        await provider.check_connection(worker_type)
+                        last_connection_check = monotonic()
+                        self.registry[worker_id].update(state="AVAILABLE", lastError=None)
+                    except Exception as exc:
+                        code = error_code(exc)
+                        logger.warning("Worker %s connection unavailable: %s", worker_id, code, exc_info=True)
+                        self.registry[worker_id].update(state="UNHEALTHY", lastError=code, currentJob=None)
+                        await asyncio.sleep(30)
+                        continue
                 job_id = await self._claim(worker_id, worker_type)
                 if not job_id:
                     await asyncio.sleep(1)
                     continue
                 self.registry[worker_id].update(state="BUSY", currentJob=job_id)
                 await self._process_job(provider, worker_id, job_id)
-                if self.registry[worker_id]["state"] != "BLOCKED":
+                if self.registry[worker_id]["state"] == "BUSY":
                     self.registry[worker_id].update(state="AVAILABLE", currentJob=None)
-                else:
-                    break
         except asyncio.CancelledError:
             pass
         except Exception as exc:
-            self.registry[worker_id].update(state="UNHEALTHY", lastError=type(exc).__name__)
+            self.registry[worker_id].update(state="UNHEALTHY", lastError=error_code(exc))
         finally:
             await provider.close()
             if self.registry[worker_id]["state"] != "BLOCKED":
@@ -140,8 +155,11 @@ class PixelcutWorkerManager:
                     job.updated_at = datetime.utcnow()
                     db.commit()
             self.registry[worker_id]["jobsProcessed"] += 1
+            self.registry[worker_id]["lastError"] = None
         except Exception as exc:
-            code = str(exc) if str(exc).isupper() else type(exc).__name__.upper()
+            logger.exception("Worker %s could not start", worker_id)
+            logger.exception("Pixelcut processing failed for job %s (%s)", job_id, operation)
+            code = error_code(exc)
             with SessionLocal() as db:
                 job = db.scalar(select(ImageProcessingJob).where(ImageProcessingJob.job_id == job_id))
                 if job:
@@ -149,12 +167,11 @@ class PixelcutWorkerManager:
                     job.status = "QUEUED" if retryable and job.attempt_count < job.max_attempts else "FAILED"
                     job.worker_id = None
                     job.error_code = code
-                    job.error_message = "Image processing could not be completed"
+                    job.error_message = error_message(code)
                     job.updated_at = datetime.utcnow()
                     db.commit()
             self.registry[worker_id]["lastError"] = code
-            if code in {"ACCESS_RESTRICTED", "CAPTCHA_DETECTED"}:
-                self.registry[worker_id]["state"] = "BLOCKED"
+            self.registry[worker_id].update(state="UNHEALTHY", currentJob=None)
 
 
 worker_manager = PixelcutWorkerManager()

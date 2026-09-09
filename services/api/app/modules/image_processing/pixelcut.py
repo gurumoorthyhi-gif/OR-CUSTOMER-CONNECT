@@ -52,6 +52,20 @@ class PixelcutBrowserProvider:
             str(profile), headless=settings.pixelcut_headless, accept_downloads=True
         )
 
+    async def check_connection(self, worker_type: str) -> None:
+        page = await self.context.new_page()
+        try:
+            url = settings.pixelcut_bg_url if worker_type == "background" else settings.pixelcut_upscale_url
+            response = await page.goto(url, wait_until="domcontentloaded", timeout=15000)
+            if response and response.status >= 400:
+                raise RuntimeError("ACCESS_RESTRICTED" if response.status in {401, 403, 429} else "PROVIDER_UNREACHABLE")
+            body = (await page.locator("body").inner_text()).lower()
+            if any(marker in body for marker in ("verify you are human", "access denied", "captcha")):
+                raise RuntimeError("ACCESS_RESTRICTED")
+            await page.locator('input[type="file"]').first.wait_for(state="attached", timeout=10000)
+        finally:
+            await page.close()
+
     async def close(self) -> None:
         if self.context:
             await self.context.close()
@@ -69,6 +83,11 @@ class PixelcutBrowserProvider:
             body_text = (await page.locator("body").inner_text()).lower()
             if any(marker in body_text for marker in ("captcha", "verify you are human", "access denied")):
                 raise RuntimeError("ACCESS_RESTRICTED")
+            # Pixelcut renders the file input before React attaches its upload handler.
+            # Wait for the hydrated upload control before dispatching a file change.
+            if operation == "REMOVE_BG":
+                upload_button = page.get_by_role("button", name="Upload image", exact=True).first
+                await upload_button.wait_for(state="visible", timeout=settings.pixelcut_upload_timeout_ms)
             file_inputs = page.locator('input[type="file"]')
             input_count = await file_inputs.count()
             if not input_count:

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "web:dev": "npm --prefix apps/web run dev",
+    "web:dev": "node scripts/start-local.mjs",
     "web:build": "npm --prefix apps/web run build",
     "web:audit": "npm --prefix apps/web audit --audit-level=moderate",
     "api:init-db": "\".venv\\Scripts\\python.exe\" -m services.api.app.db.init_db",

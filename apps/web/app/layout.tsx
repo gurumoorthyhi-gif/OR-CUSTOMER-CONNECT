@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import CustomerPortalChrome from "./components/customer-portal-chrome";
 import { ServiceWorkerRegister } from "./components/service-worker-register";
+import { ConnectionSetup } from "./components/connection-setup";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Suspense fallback={children}>
-          <CustomerPortalChrome>{children}</CustomerPortalChrome>
+          <CustomerPortalChrome><ConnectionSetup>{children}</ConnectionSetup></CustomerPortalChrome>
         </Suspense>
         <ServiceWorkerRegister />
       </body>

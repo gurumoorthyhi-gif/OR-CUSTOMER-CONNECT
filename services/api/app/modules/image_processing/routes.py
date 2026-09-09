@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from services.api.app.core.config import settings
 from services.api.app.db.session import get_db
 from services.api.app.models import Customer, Design, ImageProcessingJob
+from services.api.app.modules.image_processing.readiness import error_message, service_readiness
 
 router = APIRouter()
 DbSession = Annotated[Session, Depends(get_db)]
@@ -25,13 +26,17 @@ def serialize_job(job: ImageProcessingJob) -> dict:
         "operation": job.operation,
         "status": job.status,
         "result": {"imageUrl": job.result_file_path} if job.status == "COMPLETED" and job.result_file_path else None,
-        "error": "Image processing could not be completed. Please try again." if job.status == "FAILED" else None,
+        "error": error_message(job.error_code) if job.status == "FAILED" else None,
     }
 
 
 async def create_job(db: DbSession, operation: str, upload: UploadFile, design_id: int | None = None) -> dict:
     if operation not in ALLOWED_OPERATIONS:
         raise HTTPException(status_code=422, detail="Unsupported image processing operation")
+    from services.api.app.modules.image_processing.workers import worker_manager
+    readiness = service_readiness(worker_manager.registry, "background" if operation == "REMOVE_BG" else "upscale", settings.pixelcut_enabled)
+    if not readiness["ready"]:
+        raise HTTPException(status_code=503, detail=readiness["message"])
     if not upload.content_type or not upload.content_type.startswith("image/"):
         raise HTTPException(status_code=415, detail="An image file is required")
     customer = db.scalar(select(Customer).order_by(Customer.id.asc()))
@@ -106,7 +111,7 @@ def processing_health(db: DbSession) -> dict:
     queued = db.scalars(select(ImageProcessingJob).where(ImageProcessingJob.status == "QUEUED")).all()
     return {
         "enabled": settings.pixelcut_enabled,
-        "background": {"configuredWorkers": settings.pixelcut_bg_workers, "queueLength": sum(job.operation == "REMOVE_BG" for job in queued)},
-        "upscale": {"configuredWorkers": settings.pixelcut_upscale_workers, "queueLength": sum(job.operation.startswith("UPSCALE") for job in queued)},
+        "background": {**service_readiness(worker_manager.registry, "background", settings.pixelcut_enabled), "configuredWorkers": settings.pixelcut_bg_workers, "queueLength": sum(job.operation == "REMOVE_BG" for job in queued)},
+        "upscale": {**service_readiness(worker_manager.registry, "upscale", settings.pixelcut_enabled), "configuredWorkers": settings.pixelcut_upscale_workers, "queueLength": sum(job.operation.startswith("UPSCALE") for job in queued)},
         "workers": worker_manager.registry,
     }
