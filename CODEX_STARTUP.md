@@ -38,12 +38,14 @@ The repository includes the current SQLite databases, chat history, message atta
 
 ## Start Services
 
-Preferred: double-click `Start App.cmd` in the repository root. It starts or reuses the API on 8000 and the web app on 3011, waits for them, then opens the new-order page. Startup logs are in ignored `runtime/startup-*.log` files.
+Preferred: double-click `Start App.cmd` in the repository root. It starts or reuses the API on 8000 and the web app on 3011, waits for required image-processing workers when `PIXELCUT_ENABLED=true`, then opens the new-order page. Startup logs are in ignored `runtime/startup-*.log` files.
+
+Pixelcut background removal and upscaling must be started outside restricted Codex/sandbox execution because Playwright Chromium needs normal outbound access to `www.pixelcut.ai`. If a Codex terminal starts the app from inside a network-restricted sandbox, Pixelcut workers can report `NETWORK_ACCESS_DENIED`. Use `Start App.cmd` or run the launcher with unsandboxed/local Windows permissions for a production-like startup.
 
 Alternatively, keep this command running in a terminal:
 
 ```powershell
-npm run web:dev
+npm.cmd run web:dev
 ```
 
 The launcher does not install dependencies, start at Windows login, or start the separate ERP service. Opening a browser URL cannot start a stopped local backend. Start ERP separately as shown below when it is needed.

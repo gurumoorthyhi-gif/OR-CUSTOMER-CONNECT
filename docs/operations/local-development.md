@@ -1,6 +1,8 @@
 # Local Development
 
-See [the startup guide](../../CODEX_STARTUP.md) for first-time setup, environment values, and the separate ERP service. From the repository root, `npm run web:dev` starts the API and frontend together. `Start App.cmd` also opens the browser after startup checks.
+See [the startup guide](../../CODEX_STARTUP.md) for first-time setup, environment values, and the separate ERP service. From the repository root, `npm.cmd run web:dev` starts the API and frontend together. `Start App.cmd` also opens the browser after API, web, and required image-processing startup checks.
+
+When `PIXELCUT_ENABLED=true`, start from normal Windows permissions, not a restricted Codex sandbox. Pixelcut background removal and upscaling use Playwright Chromium and must be able to reach `www.pixelcut.ai`.
 
 ## Run Backend
 

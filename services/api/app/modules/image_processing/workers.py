@@ -104,7 +104,7 @@ class PixelcutWorkerManager:
                         self.registry[worker_id].update(state="AVAILABLE", lastError=None)
                     except Exception as exc:
                         code = error_code(exc)
-                        logger.warning("Worker %s connection unavailable: %s", worker_id, code, exc_info=True)
+                        logger.warning("Worker %s connection unavailable: %s", worker_id, code, exc_info=code != "NETWORK_ACCESS_DENIED")
                         self.registry[worker_id].update(state="UNHEALTHY", lastError=code, currentJob=None)
                         await asyncio.sleep(30)
                         continue

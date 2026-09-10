@@ -39,6 +39,37 @@ async function waitForApi() {
   throw new Error(`The API did not become ready at ${apiUrl}.`);
 }
 
+async function imageProcessingHealth() {
+  const response = await fetch(`${apiUrl}/api/image-processing/health`, { signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`Image processing health returned HTTP ${response.status}.`);
+  return response.json();
+}
+
+async function waitForRequiredImageProcessing() {
+  const deadline = Date.now() + 120_000;
+  let lastHealth = null;
+
+  while (Date.now() < deadline) {
+    try {
+      lastHealth = await imageProcessingHealth();
+      if (!lastHealth.enabled) return;
+      if (lastHealth.background?.ready && lastHealth.upscale?.ready) return;
+    } catch (error) {
+      lastHealth = { error: error instanceof Error ? error.message : String(error) };
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
+  const background = lastHealth?.background?.message || lastHealth?.error || "Background removal did not become ready.";
+  const upscale = lastHealth?.upscale?.message || lastHealth?.error || "Upscaler did not become ready.";
+  throw new Error([
+    "Image processing is required because PIXELCUT_ENABLED=true, but the workers are not ready.",
+    `Background removal: ${background}`,
+    `Upscaler: ${upscale}`,
+    "Allow network/browser access to Pixelcut or set PIXELCUT_ENABLED=false only when image processing is intentionally disabled.",
+  ].join("\n"));
+}
+
 function start(command, args, label) {
   const child = spawn(command, args, { cwd: root, env: { ...process.env, NEXT_PUBLIC_API_URL: apiUrl }, stdio: "inherit", windowsHide: true });
   children.push(child);
@@ -71,6 +102,8 @@ try {
     await waitForApi();
   }
   console.log(`API ready at ${apiUrl}`);
+  await waitForRequiredImageProcessing();
+  console.log("Required image processing workers are ready.");
 
   if (!(await isListening(webPort))) {
     start(process.execPath, [path.join(root, "apps/web/node_modules/next/dist/bin/next"), "dev", path.join(root, "apps/web"), "--hostname", "127.0.0.1", "--port", String(webPort)], "Web app");
