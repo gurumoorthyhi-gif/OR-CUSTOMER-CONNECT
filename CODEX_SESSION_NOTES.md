@@ -23,6 +23,12 @@ This project contains the ODD RAVEN customer and staff platform work completed d
 ## Local services
 
 - Web app: `http://localhost:3011`
-- API: `http://localhost:8010`
+- API: `http://127.0.0.1:8000`
+- Current web page: `http://127.0.0.1:3011/new-order`
+
+## Latest Codex session
+
+- The visible conversation for September 10, 2026 is archived in [the session transcript](docs/chat/2026-09-10.md).
+- The latest startup and Git commands are recorded in [the command log](docs/CODEX_LATEST_COMMANDS.md).
 
 Generated runtime profiles, logs, local uploads, databases, and environment files are intentionally ignored. Copy `.env.example` files and configure local secrets on the next system.
