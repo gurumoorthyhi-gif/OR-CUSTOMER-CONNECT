@@ -1,0 +1,110 @@
+"""Customer persistence models."""
+
+from __future__ import annotations
+
+from datetime import date, datetime
+from decimal import Decimal
+
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Numeric, String, Text, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.database.base import Base
+from app.modules.authentication.models import utc_now
+from app.modules.hosted_identity.models import Organization
+
+_ = Organization
+
+
+class Customer(Base):
+    __tablename__ = "customers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int | None] = mapped_column(
+        ForeignKey("organizations.id", ondelete="RESTRICT"), nullable=True, index=True
+    )
+    code: Mapped[str] = mapped_column(String(30), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(160), index=True)
+    business_name: Mapped[str] = mapped_column(String(160), default="")
+    phone: Mapped[str] = mapped_column(String(20))
+    whatsapp_number: Mapped[str] = mapped_column(String(20), default="")
+    delivery_type: Mapped[str] = mapped_column(String(20), default="Courier")
+    preferred_courier: Mapped[str] = mapped_column(String(30), default="ST")
+    other_transport_name: Mapped[str] = mapped_column(String(120), default="")
+    preferred_rate: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"))
+    email: Mapped[str | None] = mapped_column(String(254), nullable=True)
+    gst_number: Mapped[str] = mapped_column(String(15), default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    storage_prefix: Mapped[str] = mapped_column(String(500), default="")
+    google_drive_folder_id: Mapped[str] = mapped_column(String(255), default="")
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utc_now, onupdate=utc_now
+    )
+
+    addresses: Mapped[list[CustomerAddress]] = relationship(
+        back_populates="customer",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    file_references: Mapped[list[CustomerFileReference]] = relationship(
+        back_populates="customer",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    storage_dates: Mapped[list[CustomerStorageDate]] = relationship(
+        back_populates="customer",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
+
+class CustomerAddress(Base):
+    __tablename__ = "customer_addresses"
+    __table_args__ = (UniqueConstraint("customer_id", "address_type"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    customer_id: Mapped[int] = mapped_column(
+        ForeignKey("customers.id", ondelete="CASCADE"), index=True
+    )
+    address_type: Mapped[str] = mapped_column(String(20))
+    line1: Mapped[str] = mapped_column(String(200), default="")
+    line2: Mapped[str] = mapped_column(String(200), default="")
+    city: Mapped[str] = mapped_column(String(100), default="")
+    landmark: Mapped[str] = mapped_column(String(200), default="")
+    district: Mapped[str] = mapped_column(String(100), default="")
+    state: Mapped[str] = mapped_column(String(100), default="")
+    postal_code: Mapped[str] = mapped_column(String(20), default="")
+    country: Mapped[str] = mapped_column(String(80), default="India")
+
+    customer: Mapped[Customer] = relationship(back_populates="addresses")
+
+
+class CustomerFileReference(Base):
+    __tablename__ = "customer_file_references"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    customer_id: Mapped[int] = mapped_column(
+        ForeignKey("customers.id", ondelete="CASCADE"), index=True
+    )
+    label: Mapped[str] = mapped_column(String(120))
+    stored_path: Mapped[str] = mapped_column(String(500))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+    customer: Mapped[Customer] = relationship(back_populates="file_references")
+
+
+class CustomerStorageDate(Base):
+    __tablename__ = "customer_storage_dates"
+    __table_args__ = (UniqueConstraint("customer_id", "folder_date"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    customer_id: Mapped[int] = mapped_column(
+        ForeignKey("customers.id", ondelete="CASCADE"),
+        index=True,
+    )
+    folder_date: Mapped[date] = mapped_column(Date, index=True)
+    google_drive_folder_id: Mapped[str] = mapped_column(String(255), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+    customer: Mapped[Customer] = relationship(back_populates="storage_dates")
