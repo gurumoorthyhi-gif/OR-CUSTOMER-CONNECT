@@ -2,6 +2,7 @@ import { FileImage, Upload } from "lucide-react";
 
 import { sampleDesigns } from "../data";
 import { apiGet } from "../lib/api";
+import { MyDesignsPage } from "../components/mobile-profile";
 
 type DesignRow = {
   id?: number;
@@ -16,6 +17,9 @@ export default async function DesignsPage() {
   const designs = await apiGet<DesignRow[]>("/api/designs", sampleDesigns);
 
   return (
+    <>
+    <MyDesignsPage />
+    <div className="desktop-designs-only">
     <main className="app-shell">
       <section className="page-heading">
         <FileImage size={24} />
@@ -43,5 +47,7 @@ export default async function DesignsPage() {
         </div>
       </section>
     </main>
+    </div>
+    </>
   );
 }

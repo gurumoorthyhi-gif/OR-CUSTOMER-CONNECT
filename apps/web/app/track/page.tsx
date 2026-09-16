@@ -1,8 +1,16 @@
 import { MapPinned, PackageCheck } from "lucide-react";
 
 import { sampleOrders } from "../data";
+import { apiGet } from "../lib/api";
 
-export default function TrackPage() {
+type TrackOrder = { id: string; status: string; title?: string; timeline?: string[] };
+
+export default async function TrackPage({ searchParams }: { searchParams: Promise<{ orderId?: string }> }) {
+  const { orderId } = await searchParams;
+  const orders = await apiGet<TrackOrder[]>("/api/orders", sampleOrders);
+  const availableOrders = orders.length ? orders : sampleOrders;
+  const order = availableOrders.find((item) => item.id === orderId) ?? availableOrders[0];
+  const timeline = order.timeline ?? ["Received", "Artwork checked", order.status];
   return (
     <main className="app-shell">
       <section className="page-heading">
@@ -15,10 +23,10 @@ export default function TrackPage() {
 
       <section className="timeline">
         <div className="section-title">
-          <h2>{sampleOrders[0].id}</h2>
-          <span>{sampleOrders[0].status}</span>
+          <h2>{order.id}</h2>
+          <span>{order.status}</span>
         </div>
-        {sampleOrders[0].timeline.map((item, index) => (
+        {timeline.map((item, index) => (
           <div className="timeline-row" key={item}>
             <PackageCheck size={16} />
             <span>{item}</span>
@@ -29,4 +37,3 @@ export default function TrackPage() {
     </main>
   );
 }
-

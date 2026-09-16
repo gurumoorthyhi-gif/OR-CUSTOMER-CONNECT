@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" rx="28" fill="#F7F4FF"/>
+  <circle cx="252" cy="108" r="76" fill="#EFE8FF"/>
+  <path d="M65 73 88 58c8 8 38 8 46 0l23 15 35 21-23 33-18-11v70H72v-70l-18 11-23-33 34-21Z" fill="#1A1B25"/>
+  <path d="M127 130c14-20 31-29 44-24-10 4-18 11-22 19 12-6 24-6 31-1-17 5-27 17-32 29-6-4-14-11-21-23Z" fill="#CDC0F4"/>
+  <path d="M209 66h48l18 18v82h-66z" fill="#FFFFFF" stroke="#E8EAF1" stroke-width="2"/>
+  <path d="M260 66v18h18" fill="none" stroke="#E8EAF1" stroke-width="2"/>
+  <text x="242" y="116" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#5637B7">AUTH</text>
+</svg>

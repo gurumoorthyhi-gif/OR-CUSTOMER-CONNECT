@@ -29,6 +29,25 @@ def list_orders(db: DbSession) -> list[dict]:
     ]
 
 
+@router.get("/{public_id}")
+def get_order(public_id: str, db: DbSession) -> dict:
+    order = db.scalar(select(Order).where(Order.public_id == public_id))
+    if order is None:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Order not found")
+    return {
+        "id": order.public_id,
+        "title": order.title,
+        "status": order.status.value,
+        "meters": str(order.total_meters),
+        "rate_per_meter": str(order.rate_per_meter),
+        "amount": str(order.price_snapshot),
+        "payment_status": order.payment_status,
+        "external_erp_id": order.external_erp_id,
+        "created_at": order.created_at.isoformat(),
+    }
+
+
 @router.post("")
 def create_order(payload: dict, db: DbSession) -> dict:
     customer = db.scalar(select(Customer).order_by(Customer.id.asc()))

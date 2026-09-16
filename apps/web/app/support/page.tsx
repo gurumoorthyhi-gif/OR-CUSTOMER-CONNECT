@@ -1,7 +1,11 @@
 import { Headphones, ImagePlus } from "lucide-react";
+import { HelpSupportPage } from "../components/mobile-profile";
 
 export default function SupportPage() {
   return (
+    <>
+    <HelpSupportPage />
+    <div className="desktop-support-only">
     <main className="app-shell">
       <section className="page-heading">
         <Headphones size={24} />
@@ -28,6 +32,7 @@ export default function SupportPage() {
         </button>
       </section>
     </main>
+    </div>
+    </>
   );
 }
-

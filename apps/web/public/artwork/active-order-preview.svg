@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="220" viewBox="0 0 260 220">
+  <rect width="260" height="220" rx="24" fill="#F1F2F6"/>
+  <path d="M83 43 107 28c8 8 38 8 46 0l24 15 39 24-25 35-20-12v98H89V90l-20 12-25-35 39-24Z" fill="#15161B"/>
+  <path d="M110 108c16-24 36-34 50-27-11 4-21 13-25 22 13-8 27-8 36-2-20 6-31 20-37 34-7-5-16-14-24-27Z" fill="#CDC0F4"/>
+  <text x="130" y="89" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#CDC0F4">ODD RAVEN</text>
+</svg>

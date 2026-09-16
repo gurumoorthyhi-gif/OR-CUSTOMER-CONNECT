@@ -21,6 +21,7 @@ import {
   Truck,
 } from "lucide-react";
 import Link from "next/link";
+import MobileHomePage from "../components/mobile-home/MobileHomePage";
 
 type IconComponent = typeof Home;
 
@@ -51,11 +52,11 @@ const quickActions: QuickAction[] = [
 ];
 
 const recentOrders = [
-  { orderId: "OR-1058", date: "08 Sep 2026", designs: "12 designs", quantity: "15 metres", status: "Printing", action: "View", href: "/orders/OR-1058" },
-  { orderId: "OR-1055", date: "06 Sep 2026", designs: "8 designs", quantity: "10 metres", status: "Awaiting Approval", action: "View", href: "/orders/OR-1055" },
-  { orderId: "OR-1049", date: "02 Sep 2026", designs: "20 designs", quantity: "25 metres", status: "Dispatched", action: "Track", href: "/track" },
-  { orderId: "OR-1042", date: "28 Aug 2026", designs: "6 designs", quantity: "8 metres", status: "Delivered", action: "View", href: "/orders/OR-1042" },
-  { orderId: "OR-1038", date: "24 Aug 2026", designs: "10 designs", quantity: "12 metres", status: "Completed", action: "Reorder", href: "/new-order" },
+  { orderId: "OR-1028", date: "08 Sep 2026", designs: "12 designs", quantity: "8.4 metres", status: "Awaiting Approval", action: "View", href: "/orders/OR-1028" },
+  { orderId: "OR-1025", date: "06 Sep 2026", designs: "8 designs", quantity: "14.2 metres", status: "Printing", action: "View", href: "/orders/OR-1025" },
+  { orderId: "OR-1019", date: "02 Sep 2026", designs: "20 designs", quantity: "5.8 metres", status: "Dispatched", action: "Track", href: "/track?orderId=OR-1019" },
+  { orderId: "OR-1028", date: "28 Aug 2026", designs: "6 designs", quantity: "8.4 metres", status: "Awaiting Approval", action: "View", href: "/orders/OR-1028" },
+  { orderId: "OR-1025", date: "24 Aug 2026", designs: "10 designs", quantity: "14.2 metres", status: "Printing", action: "Reorder", href: "/new-order" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -92,6 +93,8 @@ function StatusPill({ status }: { status: string }) {
 export default function DashboardShell() {
   return (
     <div className="dashboard-frame">
+      <MobileHomePage />
+      <div className="desktop-dashboard-only">
       <main className="dashboard-main">
         <header className="dashboard-header">
           <div className="dashboard-greeting">
@@ -137,7 +140,7 @@ export default function DashboardShell() {
           <div className="dashboard-orders-scroll">
             <table className="dashboard-orders-table">
               <thead><tr><th>Order ID</th><th>Date</th><th>Designs</th><th>Quantity</th><th>Status</th><th>Action</th></tr></thead>
-              <tbody>{recentOrders.map((order) => <tr key={order.orderId}><th scope="row">{order.orderId}</th><td>{order.date}</td><td>{order.designs}</td><td>{order.quantity}</td><td><StatusPill status={order.status} /></td><td><Link href={order.href}>{order.action} <ChevronRight size={15} /></Link></td></tr>)}</tbody>
+              <tbody>{recentOrders.map((order, index) => <tr key={`${order.orderId}-${index}`}><th scope="row">{order.orderId}</th><td>{order.date}</td><td>{order.designs}</td><td>{order.quantity}</td><td><StatusPill status={order.status} /></td><td><Link href={order.href}>{order.action} <ChevronRight size={15} /></Link></td></tr>)}</tbody>
             </table>
           </div>
         </section>
@@ -152,6 +155,7 @@ export default function DashboardShell() {
 
         <footer className="dashboard-footer"><div><strong>ODD RAVEN DTF</strong><span>Print Bolder. Grow Bigger.</span></div><nav aria-label="Footer"><Link href="/profile">Privacy</Link><Link href="/profile">Terms</Link><Link href="/support">Help</Link><Link href="/support">Contact</Link></nav></footer>
       </main>
+      </div>
     </div>
   );
 }

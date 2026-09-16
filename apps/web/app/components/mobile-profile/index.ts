@@ -1,0 +1,14 @@
+export { default as ProfileMainPage } from "./ProfileMainPage";
+export { default as EditProfilePage } from "./EditProfilePage";
+export { default as AddressBookPage } from "./AddressBookPage";
+export { default as PaymentMethodsPage } from "./PaymentMethodsPage";
+export { default as MyDesignsPage } from "./MyDesignsPage";
+export { default as PreferencesPage } from "./PreferencesPage";
+export { default as HelpSupportPage } from "./HelpSupportPage";
+export { default as LevelRewardsPage } from "./LevelRewardsPage";
+export { default as EditAddressPage } from "./EditAddressPage";
+export { default as AddPaymentMethodPage } from "./AddPaymentMethodPage";
+export { default as DesignDetailsPage } from "./DesignDetailsPage";
+export { default as SupportChatPage } from "./SupportChatPage";
+export * from "./mobile-profile.types";
+export * from "./mobile-profile.data";

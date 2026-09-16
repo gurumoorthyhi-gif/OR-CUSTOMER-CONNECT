@@ -1,28 +1,33 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from services.api.app.db.session import get_db
-from services.api.app.models import Payment
+from services.api.app.models import Order, Payment
+from services.api.app.modules.customers.routes import customer_from_session
 
 router = APIRouter()
 DbSession = Annotated[Session, Depends(get_db)]
 
 
 @router.get("")
-def list_payments(db: DbSession) -> list[dict]:
-    payments = db.scalars(select(Payment).order_by(Payment.created_at.desc())).all()
+def list_payments(request: Request, db: DbSession) -> list[dict]:
+    query = select(Payment, Order.public_id).join(Order, Order.id == Payment.order_id).order_by(Payment.created_at.desc())
+    customer = customer_from_session(request, db)
+    if customer:
+        query = query.where(Order.customer_id == customer.id)
+    rows = db.execute(query).all()
     return [
         {
             "id": payment.public_id,
-            "order_id": payment.order_id,
+            "order_id": order_public_id,
             "status": payment.status,
             "amount": str(payment.amount),
             "method": payment.method,
         }
-        for payment in payments
+        for payment, order_public_id in rows
     ]
 
 

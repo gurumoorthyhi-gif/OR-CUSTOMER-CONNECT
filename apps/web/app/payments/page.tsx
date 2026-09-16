@@ -2,6 +2,7 @@ import { CreditCard } from "lucide-react";
 
 import { samplePayments } from "../data";
 import { apiGet } from "../lib/api";
+import { PaymentMethodsPage } from "../components/mobile-profile";
 
 type PaymentRow = {
   id: string;
@@ -15,6 +16,9 @@ export default async function PaymentsPage() {
   const payments = await apiGet<PaymentRow[]>("/api/payments", samplePayments);
 
   return (
+    <>
+    <PaymentMethodsPage />
+    <div className="desktop-payments-only">
     <main className="app-shell">
       <section className="page-heading">
         <CreditCard size={24} />
@@ -41,5 +45,7 @@ export default async function PaymentsPage() {
         </div>
       </section>
     </main>
+    </div>
+    </>
   );
 }

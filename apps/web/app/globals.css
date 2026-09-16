@@ -1,3 +1,8 @@
+@import "./components/mobile-auth/mobile-auth.css";
+@import "./components/mobile-home/mobile-home.css";
+@import "./components/mobile-orders/mobile-orders.css";
+@import "./components/mobile-profile/mobile-profile.css";
+
 :root {
   color: #18181b;
   background: #f5f5f0;
@@ -4657,12 +4662,22 @@ textarea {
 }
 
 @media (max-width: 720px) {
-  .customer-portal-content {
-    margin-left: 78px;
+  .desktop-dashboard-only,
+  .desktop-orders-only,
+  .desktop-profile-only,
+  .desktop-designs-only,
+  .desktop-payments-only,
+  .desktop-support-only {
+    display: none !important;
   }
 
+  .customer-navigation-rail {
+    display: none !important;
+  }
+
+  .customer-portal-content,
   .customer-navigation-rail.expanded + .customer-portal-content {
-    margin-left: 210px;
+    margin-left: 0 !important;
   }
 }
 

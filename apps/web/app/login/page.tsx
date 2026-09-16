@@ -1,13 +1,11 @@
 "use client";
 
-import { KeyRound, UserRound } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { SignInPage } from "../components/mobile-auth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -15,12 +13,13 @@ export default function LoginPage() {
     event.preventDefault();
     setSaving(true);
     setError("");
+    const form = new FormData(event.currentTarget);
     try {
-      const response = await fetch("/api/customers/login", {
+      const response = await fetch("/api/auth/login/mobile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ mobile: String(form.get("mobile") || ""), password: String(form.get("password") || "") }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(result.detail ?? "Login failed");
@@ -33,28 +32,13 @@ export default function LoginPage() {
     }
   }
 
-  return (
-    <main className="auth-shell">
-      <form className="auth-panel" onSubmit={login}>
-        <p className="eyebrow">ODD RAVEN</p>
-        <h1>Login</h1>
-        <label>
-          Username
-          <span>
-            <UserRound size={18} />
-            <input required autoComplete="username" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Enter username" />
-          </span>
-        </label>
-        <label>
-          Password
-          <input required minLength={6} type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter password" />
-        </label>
-        {error ? <p className="error" role="alert">{error}</p> : null}
-        <button className="primary-action" type="submit" disabled={saving}>
-          <KeyRound size={18} />
-          {saving ? "Signing in..." : "Sign in"}
-        </button>
-      </form>
-    </main>
-  );
+  async function requestOtp(mobile: string) {
+    setError("");
+    const response = await fetch("/api/auth/otp/request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mobile }) });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) { setError(result.detail ?? "Unable to request OTP"); return; }
+    router.push(`/verify-otp?mode=login&mobile=${encodeURIComponent(mobile)}`);
+  }
+
+  return <><SignInPage onSubmit={login} onOtpRequest={requestOtp} />{saving ? <p className="customer-auth-status">Signing in…</p> : null}{error ? <p className="customer-auth-error" role="alert">{error}</p> : null}</>;
 }

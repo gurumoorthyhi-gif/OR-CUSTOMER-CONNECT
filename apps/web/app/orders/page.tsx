@@ -2,6 +2,9 @@ import { PackageCheck } from "lucide-react";
 
 import { sampleOrders } from "../data";
 import { apiGet } from "../lib/api";
+import MobileOrdersPage from "../components/mobile-orders/MobileOrdersPage";
+import { mobileOrdersSample } from "../components/mobile-orders/mobile-orders.data";
+import type { MobileOrdersData } from "../components/mobile-orders/mobile-orders.types";
 
 type OrderRow = {
   id: string;
@@ -14,8 +17,27 @@ type OrderRow = {
 
 export default async function OrdersPage() {
   const orders = await apiGet<OrderRow[]>("/api/orders", sampleOrders);
+  const mobileOrders: MobileOrdersData = {
+    ...mobileOrdersSample,
+    orders: orders.map((order, index) => ({
+      ...mobileOrdersSample.orders[index % mobileOrdersSample.orders.length],
+      id: order.id,
+      actionHref: `/orders/${encodeURIComponent(order.id)}`,
+      status: /complete|deliver/i.test(order.status) ? "Completed" : /approval/i.test(order.status) ? "Approval" : /dispatch/i.test(order.status) ? "Dispatched" : "Printing",
+      designs: order.title || order.meters,
+      quantity: order.meters,
+      metrics: [
+        { label: "Amount", value: order.amount, icon: "amount" as const },
+        { label: "Payment", value: order.payment_status ?? "Pending", icon: "payment" as const },
+        { label: "ETA", value: "Check order details", icon: "time" as const },
+      ],
+    })),
+  };
 
   return (
+    <>
+    <MobileOrdersPage data={mobileOrders} />
+    <div className="desktop-orders-only">
     <main className="app-shell">
       <section className="page-heading">
         <PackageCheck size={24} />
@@ -44,5 +66,7 @@ export default async function OrdersPage() {
         </div>
       </section>
     </main>
+    </div>
+    </>
   );
 }
