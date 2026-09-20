@@ -6,6 +6,7 @@ import { ChangeEvent, CSSProperties, DragEvent, FormEvent, PointerEvent, WheelEv
 import type { GangsheetResult } from "../gangsheet/engine";
 import GangsheetBuilder from "./gangsheet-builder";
 import { API_BASE, useConnection } from "../components/connection-setup";
+import { FILE_TRANSFER_ENABLED } from "../lib/demo";
 
 const MAX_ARTWORK_FILES = 100;
 const MAX_TOTAL_UPLOAD_BYTES = 1 * 1024 * 1024 * 1024;
@@ -125,6 +126,10 @@ export default function NewOrderPage() {
   }
 
   function addArtworkFiles(files: File[]) {
+    if (!FILE_TRANSFER_ENABLED) {
+      setError("Artwork upload is paused in the Sites test build.");
+      return;
+    }
     setError("");
     setNotice("");
     if (!files.length) return;
@@ -209,6 +214,11 @@ export default function NewOrderPage() {
 
   function handleArtworkDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
+    if (!FILE_TRANSFER_ENABLED) {
+      setError("Artwork upload is paused in the Sites test build.");
+      setIsDragging(false);
+      return;
+    }
     setIsDragging(false);
     addArtworkFiles(Array.from(event.dataTransfer.files));
   }
@@ -483,14 +493,14 @@ export default function NewOrderPage() {
           <section className="artwork-upload-card">
             <div className="artwork-upload-heading">
               <div className="artwork-upload-icon"><Image size={28} /></div>
-              <div><strong>Select artwork</strong><small>Upload your artwork files to get started.</small></div>
+              <div><strong>Select artwork</strong><small>{FILE_TRANSFER_ENABLED ? "Upload your artwork files to get started." : "Upload is paused in this hosted test build."}</small></div>
             </div>
             <div className={`artwork-dropzone ${isDragging ? "drag-over" : ""}`} onDragEnter={(event) => { event.preventDefault(); setIsDragging(true); }} onDragOver={(event) => event.preventDefault()} onDragLeave={(event) => { if (event.currentTarget === event.target) setIsDragging(false); }} onDrop={handleArtworkDrop}>
               <div className="artwork-drop-main">
                 <CloudUpload className="artwork-cloud-icon" size={54} />
                 <h2>Drag and drop artwork here</h2>
-                <p>or <span>browse from your computer</span></p>
-                <label className="artwork-upload-button"><Upload size={18} /> Add images<input type="file" multiple accept="image/png,image/jpeg,image/webp,image/tiff,.tif,.tiff" onChange={addArtwork} /></label>
+                <p>{FILE_TRANSFER_ENABLED ? <>or <span>browse from your computer</span></> : <span>File transfer is temporarily disabled for testing.</span>}</p>
+                <label className="artwork-upload-button"><Upload size={18} /> Add images<input type="file" multiple accept="image/png,image/jpeg,image/webp,image/tiff,.tif,.tiff" onChange={addArtwork} disabled={!FILE_TRANSFER_ENABLED} /></label>
               </div>
               <aside className="artwork-trust-panel" aria-label="Upload information">
                 <div><span className="trust-icon blue"><Upload size={19} /></span><p><strong>Up to 100 images</strong><small>1 GB combined limit</small></p></div>
@@ -582,7 +592,7 @@ export default function NewOrderPage() {
           </label>
           <div className="artwork-footer-actions">
             <span>{artwork.length} {artwork.length === 1 ? "image" : "images"} / {formatFileSize(totalSize)} total</span>
-            <div><label className="artwork-add-more"><FileUp size={17} /> Add more images<input type="file" multiple accept="image/png,image/jpeg,image/webp,image/tiff,.tif,.tiff" onChange={addArtwork} /></label><button className="gangsheet-open-button" type="button" onClick={openGangsheetBuilder} disabled={!canCreateGangsheet}><Sparkles size={17} /> {gangsheetResult ? "Edit gangsheet" : "Create gangsheet"}</button><button className="primary-action" type="submit"><Calculator size={18} /> Continue to review</button></div>
+            <div><label className="artwork-add-more"><FileUp size={17} /> Add more images<input type="file" multiple accept="image/png,image/jpeg,image/webp,image/tiff,.tif,.tiff" onChange={addArtwork} disabled={!FILE_TRANSFER_ENABLED} /></label><button className="gangsheet-open-button" type="button" onClick={openGangsheetBuilder} disabled={!canCreateGangsheet}><Sparkles size={17} /> {gangsheetResult ? "Edit gangsheet" : "Create gangsheet"}</button><button className="primary-action" type="submit"><Calculator size={18} /> Continue to review</button></div>
           </div>
         </form>
 
