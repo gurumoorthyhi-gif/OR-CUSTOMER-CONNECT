@@ -7,6 +7,7 @@ import { MessageSquareText } from "lucide-react";
 import AuthLayout from "./AuthLayout";
 import AuthOtpInput from "./AuthOtpInput";
 import "./mobile-auth.css";
+import { SITE_DEMO_MODE } from "../../lib/demo";
 
 export default function VerifyOtpPage() {
   const router = useRouter();
@@ -20,6 +21,11 @@ export default function VerifyOtpPage() {
   async function verify(event: FormEvent) {
     event.preventDefault();
     setSaving(true); setError("");
+    if (SITE_DEMO_MODE) {
+      setSaving(false);
+      router.push("/dashboard");
+      return;
+    }
     const response = await fetch("/api/auth/otp/verify", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ mobile, otp }) });
     const result = await response.json().catch(() => ({}));
     setSaving(false);
@@ -29,6 +35,10 @@ export default function VerifyOtpPage() {
   }
 
   async function resend() {
+    if (SITE_DEMO_MODE) {
+      setError("");
+      return;
+    }
     await fetch("/api/auth/otp/request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mobile }) });
     setError("");
   }
