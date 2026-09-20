@@ -42,6 +42,7 @@ import {
   ZoomOut,
 } from "lucide-react";
 import Link from "next/link";
+import { FILE_TRANSFER_ENABLED } from "../lib/demo";
 import { FormEvent, KeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 type MediaAttachment = {
@@ -1316,6 +1317,7 @@ export function Messenger({ messages, mode, initialCustomer }: MessengerProps) {
   }
 
   function uploadMedia(formData: FormData, clientId: string, names: string) {
+    if (!FILE_TRANSFER_ENABLED) return Promise.reject(new Error("File upload is paused in the Sites test build"));
     return new Promise<{ message: Message }>((resolve, reject) => {
       const request = new XMLHttpRequest();
       uploadRequestRef.current = request;
@@ -1342,6 +1344,10 @@ export function Messenger({ messages, mode, initialCustomer }: MessengerProps) {
   }
 
   function downloadAttachment(attachment: MediaAttachment) {
+    if (!FILE_TRANSFER_ENABLED) {
+      showNotice("File download is paused in the Sites test build");
+      return;
+    }
     const request = new XMLHttpRequest();
     setActiveDownload({ name: attachment.original_filename, progress: 0 });
     request.open("GET", attachment.url.startsWith("blob:") ? attachment.url : `${apiBase}${attachment.url}`);
@@ -1760,7 +1766,7 @@ export function Messenger({ messages, mode, initialCustomer }: MessengerProps) {
                             return <VoiceMessagePlayer key={media.id} attachment={media} apiBase={apiBase} />;
                           }
                           return (
-                            <button className="document-card" type="button" key={media.id} onClick={() => media.url && downloadAttachment(media)}>
+                            <button className="document-card" type="button" key={media.id} disabled={!FILE_TRANSFER_ENABLED} onClick={() => media.url && downloadAttachment(media)}>
                               <FileText size={28} />
                               <span><strong>{media.original_filename}</strong><small>{(media.extension || media.mime_type.split("/").at(-1) || "FILE").replace(".", "").toUpperCase()}{media.size_bytes ? ` · ${formatBytes(media.size_bytes)}` : ""}</small></span>
                               <Download size={20} />
@@ -1836,6 +1842,7 @@ export function Messenger({ messages, mode, initialCustomer }: MessengerProps) {
                 <label className="attach-button" aria-label="Attach file">
                   <Paperclip size={19} />
                   <input
+                    disabled={!FILE_TRANSFER_ENABLED}
                     type="file"
                     accept=".png,.jpg,.jpeg,.webp,.pdf,.svg,.ai,.eps,.psd,.cdr,.tif,.tiff,.zip,.rar,.mp4,.mov,.webm,.m4a,.mp3,.ogg,.opus,.wav,.aac"
                     multiple
@@ -1897,7 +1904,7 @@ export function Messenger({ messages, mode, initialCustomer }: MessengerProps) {
               <span><strong>{item.attachment.original_filename}</strong><small>{formatBytes(item.attachment.size_bytes)}{item.attachment.width ? ` · ${item.attachment.width} × ${item.attachment.height}` : ""}</small></span>
               <div>
                 {item.attachment.mime_type.startsWith("image/") ? <><button type="button" aria-label="Zoom out" onClick={() => setViewerZoom((zoom) => Math.max(0.5, zoom - 0.25))}><ZoomOut size={20} /></button><button type="button" aria-label="Actual size" onClick={() => setViewerZoom(1)}>1:1</button><button type="button" aria-label="Zoom in" onClick={() => setViewerZoom((zoom) => Math.min(4, zoom + 0.25))}><ZoomIn size={20} /></button></> : null}
-                <button type="button" aria-label="Download" onClick={() => downloadAttachment(item.attachment)}><Download size={20} /></button>
+                <button type="button" aria-label="Download" disabled={!FILE_TRANSFER_ENABLED} title={FILE_TRANSFER_ENABLED ? "Download" : "Download paused in test build"} onClick={() => downloadAttachment(item.attachment)}><Download size={20} /></button>
                 <button type="button" aria-label="Message information" onClick={() => setInfoTarget(item.message)}><Info size={20} /></button>
                 <button type="button" aria-label="Close viewer" onClick={() => setViewerIndex(null)}><X size={22} /></button>
               </div>
@@ -1916,7 +1923,7 @@ export function Messenger({ messages, mode, initialCustomer }: MessengerProps) {
           <div className="info-profile">{customerAvatar("large")}<h2>{customerDeliveryCode || customerName}</h2></div>
           <section><h3>Starred messages</h3>{visibleMessages.filter((message) => message.is_starred).map((message) => <button type="button" key={message.id} onClick={() => document.getElementById(`message-${message.id}`)?.scrollIntoView({ block: "center" })}>{messageText(message)}</button>)}</section>
           <section><h3>Media</h3><div className="shared-media-grid">{mediaItems.map((item) => <button key={item.attachment.id} type="button" onClick={() => openMediaViewer(item.attachment.id)}>{item.attachment.mime_type.startsWith("image/") ? <img src={`${apiBase}${item.attachment.thumbnail_url ?? item.attachment.url}`} alt={item.attachment.original_filename} /> : <video src={`${apiBase}${item.attachment.url}`} muted />}</button>)}</div>{!mediaItems.length ? <p>No shared media</p> : null}</section>
-          <section><h3>Documents</h3>{sharedDocuments.map((item) => <button className="shared-file" type="button" key={item.attachment.id} onClick={() => downloadAttachment(item.attachment)}>{item.attachment.original_filename}<small>{formatBytes(item.attachment.size_bytes)} · {formatTime(item.message.created_at)}</small></button>)}{!sharedDocuments.length ? <p>No shared documents</p> : null}</section>
+          <section><h3>Documents</h3>{sharedDocuments.map((item) => <button className="shared-file" type="button" key={item.attachment.id} disabled={!FILE_TRANSFER_ENABLED} onClick={() => downloadAttachment(item.attachment)}>{item.attachment.original_filename}<small>{formatBytes(item.attachment.size_bytes)} · {formatTime(item.message.created_at)}</small></button>)}{!sharedDocuments.length ? <p>No shared documents</p> : null}</section>
           <section><h3>Links</h3>{sharedLinks.map((link) => <a className="shared-file" key={link} href={link} target="_blank" rel="noreferrer">{link}</a>)}{!sharedLinks.length ? <p>No shared links</p> : null}</section>
         </aside>
       ) : null}
