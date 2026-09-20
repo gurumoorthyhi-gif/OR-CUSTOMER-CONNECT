@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignInPage } from "../components/mobile-auth";
+import { SITE_DEMO_MODE } from "../lib/demo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,6 +15,11 @@ export default function LoginPage() {
     setSaving(true);
     setError("");
     const form = new FormData(event.currentTarget);
+    if (SITE_DEMO_MODE) {
+      setSaving(false);
+      router.push("/dashboard");
+      return;
+    }
     try {
       const response = await fetch("/api/auth/login/mobile", {
         method: "POST",
@@ -34,6 +40,10 @@ export default function LoginPage() {
 
   async function requestOtp(mobile: string) {
     setError("");
+    if (SITE_DEMO_MODE) {
+      router.push(`/verify-otp?mode=login&mobile=${encodeURIComponent(mobile || "9342180012")}`);
+      return;
+    }
     const response = await fetch("/api/auth/otp/request", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mobile }) });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) { setError(result.detail ?? "Unable to request OTP"); return; }
