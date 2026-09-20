@@ -2,12 +2,15 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { CheckCircle2, LoaderCircle, RefreshCw, AlertCircle } from "lucide-react";
+import { SITE_DEMO_MODE } from "../lib/demo";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 type Service = { ready: boolean; state: string; message: string };
 type Connection = { backend: boolean; background: Service; upscale: Service };
 const pending: Service = { ready: false, state: "connecting", message: "Checking connection..." };
-const initial: Connection = { backend: false, background: pending, upscale: pending };
+const demoService: Service = { ready: true, state: "demo", message: "Sites test mode: external processing is paused." };
+const demoConnection: Connection = { backend: true, background: demoService, upscale: demoService };
+const initial: Connection = SITE_DEMO_MODE ? demoConnection : { backend: false, background: pending, upscale: pending };
 const ConnectionContext = createContext({ connection: initial, check: async (): Promise<Connection> => initial });
 
 export const useConnection = () => useContext(ConnectionContext);
@@ -17,6 +20,11 @@ export function ConnectionSetup({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
   const inFlight = useRef<Promise<Connection> | null>(null);
   const check = useCallback((): Promise<Connection> => {
+    if (SITE_DEMO_MODE) {
+      setConnection(demoConnection);
+      setChecking(false);
+      return Promise.resolve(demoConnection);
+    }
     if (inFlight.current) return inFlight.current;
     setChecking(true);
     inFlight.current = (async () => {
@@ -61,7 +69,7 @@ export function ConnectionSetup({ children }: { children: React.ReactNode }) {
   return <ConnectionContext.Provider value={{ connection, check }}>
     <section className="connection-setup" aria-label="Connection setup">
       <div className="connection-setup-row">
-        <strong>{ready ? "Services connected" : "Connection setup"}</strong>
+        <strong>{SITE_DEMO_MODE ? "Sites test mode" : ready ? "Services connected" : "Connection setup"}</strong>
         {[{ label: "Backend", ready: connection.backend }, { label: "Background removal", ready: connection.background.ready }, { label: "Upscaler", ready: connection.upscale.ready }].map((service) => <span key={service.label} className={service.ready ? "connection-ready" : "connection-unavailable"}>{service.ready ? <CheckCircle2 size={16} /> : checking ? <LoaderCircle size={16} className="spin" /> : <AlertCircle size={16} />}{service.label}: {service.ready ? "Connected" : checking ? "Checking" : "Unavailable"}</span>)}
         <button type="button" onClick={() => void check()} disabled={checking} title="Check connections again" aria-label="Check connections again"><RefreshCw size={17} className={checking ? "spin" : undefined} /></button>
       </div>
