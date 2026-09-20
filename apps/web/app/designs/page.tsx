@@ -29,9 +29,9 @@ export default async function DesignsPage() {
         </div>
       </section>
       <section className="work-panel">
-        <button className="primary-action" type="button">
+        <button className="primary-action" type="button" disabled title="Upload is paused in the Sites test build">
           <Upload size={18} />
-          Upload Design
+          Upload paused for test
         </button>
         <div className="design-grid">
           {designs.map((design) => (
