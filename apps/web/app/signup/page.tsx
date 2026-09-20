@@ -6,6 +6,7 @@ import { LockKeyhole, Mail, Phone, UserRound, UserPlus } from "lucide-react";
 import AuthField from "../components/mobile-auth/AuthField";
 import AuthLayout from "../components/mobile-auth/AuthLayout";
 import "../components/mobile-auth/mobile-auth.css";
+import { SITE_DEMO_MODE } from "../lib/demo";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -13,6 +14,10 @@ export default function SignupPage() {
 
   async function register(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError("");
+    if (SITE_DEMO_MODE) {
+      router.push("/dashboard");
+      return;
+    }
     const form = new FormData(event.currentTarget);
     const response = await fetch("/api/auth/register", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: JSON.stringify({ full_name: form.get("fullName"), email: form.get("email"), mobile: form.get("mobile"), password: form.get("password") }) });
     const result = await response.json().catch(() => ({}));
