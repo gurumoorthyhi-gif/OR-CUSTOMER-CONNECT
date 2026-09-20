@@ -24,6 +24,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { FILE_TRANSFER_ENABLED } from "../lib/demo";
 import { FormEvent, useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 
 type CustomerProfile = {
@@ -437,6 +438,10 @@ export function ProfileEditor() {
   }
 
   async function saveEditedPhoto() {
+    if (!FILE_TRANSFER_ENABLED) {
+      setNotice("Profile photo upload is paused in the Sites test build.");
+      return;
+    }
     const canvas = renderEditedPhoto();
     if (!canvas) {
       setNotice("Photo is still loading");
@@ -553,7 +558,7 @@ export function ProfileEditor() {
                 {profileImageSource ? <img src={profileImageSource} alt="" crossOrigin="anonymous" /> : <span>{initials}</span>}
               </button>
               <button className="profile-photo-edit" type="button" aria-label="Edit profile photo" onClick={openPhotoSheet} disabled={photoUploading}><Pencil size={15} /></button>
-              <input className="profile-photo-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif" ref={photoGalleryInputRef} onChange={(event) => { const file = event.target.files?.[0]; if (file) chooseGalleryPhoto(file); event.currentTarget.value = ""; }} />
+              <input className="profile-photo-input" type="file" disabled={!FILE_TRANSFER_ENABLED} accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif" ref={photoGalleryInputRef} onChange={(event) => { const file = event.target.files?.[0]; if (file) chooseGalleryPhoto(file); event.currentTarget.value = ""; }} />
             </div>
             <div>
               <strong>{form.business_name}</strong>
